@@ -1,8 +1,9 @@
-import { getArticleMetas } from '$lib/server/article'
+import { fetchMarkdownPosts, githubUserInfo } from '$lib/server/article';
 
-import type { PageServerLoad } from './$types'
+import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
-    const posts = await getArticleMetas('src/routes/posts')
-    return { posts }
-}
+  const posts = (await fetchMarkdownPosts()).filter((post) => post.meta.published);
+  const userInfo = await githubUserInfo('ironpark');
+  return { posts, userInfo };
+};

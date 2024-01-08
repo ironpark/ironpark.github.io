@@ -1,63 +1,70 @@
-import fss from 'fs'
-import fs from 'fs/promises'
-import yaml from 'js-yaml'
-
+import fss from 'fs';
+import fs from 'fs/promises';
+import yaml from 'js-yaml';
+import { GITHUB_TOKEN } from '$env/static/private';
 /** Meatadata of article */
 export type ArticleMeta = {
-    /** Article ID */
-    id: string
-    /** Title */
-    title: string
-    /** Published date as YYYY-MM-DD form */
-    publishedAt: string
-    /** Modified datetime as ISO format */
-    modifiedAt: string
-    /** Short summary in plain text */
-    summary: string
-    /** Draft flag */
-    draft: boolean
+  /** Article ID */
+  id: string;
+  /** Title */
+  title: string;
+  /** Published date as YYYY-MM-DD form */
+  publishedAt: string;
+  /** Modified datetime as ISO format */
+  modifiedAt: string;
+  /** Short summary in plain text */
+  summary: string;
+  /** Draft flag */
+  draft: boolean;
+};
+
+function getFilesizeInBytes(filename: string) {
+  let stats = fss.statSync(filename);
+  let fileSizeInBytes = stats.size;
+  return {
+    size: stats.size,
+    mtime: stats.mtime,
+    ctime: stats.ctime
+  };
 }
 
-/**
- * Extract metadata of all articles with the directory
- * @param dir A path
- * @returns Metadata of all articles
- */
-export async function getArticleMetas(dir: string): Promise<ArticleMeta[]> {
-    const promises = (await fs.readdir(dir))
-        .filter(f => fss.existsSync(`${dir}/${f}/+page.md`))
-        .map(id => getArticleMeta(dir, id))
-    return (await Promise.all(promises)).sort((a, b) => (a.publishedAt < b.publishedAt ? 1 : -1))
-}
+export const fetchMarkdownPosts = async () => {
+  const allPostFiles = import.meta.glob('/src/routes/posts/*.md');
+  const iterablePostFiles = Object.entries(allPostFiles);
+  console.log(iterablePostFiles);
+  const allPosts = await Promise.all(
+    iterablePostFiles.map(async ([path, resolver]) => {
+      // @ts-ignore
+      const data = await resolver();
+      // console.log(data);
+      // @ts-ignore
+      const { metadata } = data;
+      const postPath = path.slice(11, -3);
+      console.log(getFilesizeInBytes('.' + path));
+      return {
+        info: getFilesizeInBytes('.' + path),
+        meta: metadata,
+        path: postPath
+      };
+    })
+  );
+  return allPosts;
+};
 
-/**
- * Extract metadata from directory and article id
- * @param dir A path
- * @param id Article ID
- * @returns Metadata of article
- */
-export async function getArticleMeta(dir: string, id: string): Promise<ArticleMeta> {
-    const filepath = `${dir}/${id}/+page.md`
-    const f = await fs.readFile(filepath)
-    const mtime = (await fs.stat(filepath)).mtime
+export const githubUserInfo = async (githubUsername: string) => {
+  const url = 'https://api.github.com/graphql';
+  const queryBody = `query { user(login: "${githubUsername}") { name avatarUrl(size:80) contributionsCollection { contributionCalendar { totalContributions weeks {contributionDays {contributionCount date color}}} } } }`;
 
-    return extractMeta(id, f.toString(), mtime)
-}
+  const headers = {
+    Authorization: `Bearer ${GITHUB_TOKEN}`,
+    'Content-Type': 'application/json'
+  };
 
-/**
- * Extract metadata from markdown file.
- * @param id Article ID
- * @param markdown Raw markdown content
- * @returns Metadata of article
- */
-export function extractMeta(id: string, markdown: string, mtime: Date): ArticleMeta {
-    const S = '---\n' // separator
-    const raw = markdown.substring(S.length, markdown.indexOf(S, S.length)).trim()
-    const frontmatter = yaml.load(raw) as Record<string, any>
-    return {
-        ...frontmatter,
-        id,
-        draft: !!frontmatter.draft,
-        modifiedAt: mtime.toISOString(),
-    } as ArticleMeta
-}
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify({ query: queryBody })
+  });
+
+  return (await response.json()).data.user;
+};

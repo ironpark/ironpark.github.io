@@ -9,11 +9,12 @@ categories:
 published: true
 ---
 
-## My First Markdown Blog s
+## My First Markdown Blog
 
 Hello! 👋
 
 아래처럼 코드 Syntax Highlight도 지원합니다.
+
 
 ```js
 function greet(name: string) {
