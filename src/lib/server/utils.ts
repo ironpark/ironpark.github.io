@@ -1,54 +1,30 @@
 import fss from 'fs';
-import fs from 'fs/promises';
-import yaml from 'js-yaml';
-import { GITHUB_TOKEN } from '$env/static/private';
-/** Meatadata of article */
-export type ArticleMeta = {
-  /** Article ID */
-  id: string;
-  /** Title */
-  title: string;
-  /** Published date as YYYY-MM-DD form */
-  publishedAt: string;
-  /** Modified datetime as ISO format */
-  modifiedAt: string;
-  /** Short summary in plain text */
-  summary: string;
-  /** Draft flag */
-  draft: boolean;
-};
 
-function getFilesizeInBytes(filename: string) {
+import { GITHUB_TOKEN } from '$env/static/private';
+const getFileInfo = (filename: string) => {
   let stats = fss.statSync(filename);
-  let fileSizeInBytes = stats.size;
   return {
     size: stats.size,
     mtime: stats.mtime,
     ctime: stats.ctime
   };
-}
+};
 
 export const fetchMarkdownPosts = async () => {
   const allPostFiles = import.meta.glob('/src/routes/posts/*.md');
   const iterablePostFiles = Object.entries(allPostFiles);
-  console.log(iterablePostFiles);
-  const allPosts = await Promise.all(
+  return await Promise.all(
     iterablePostFiles.map(async ([path, resolver]) => {
       // @ts-ignore
-      const data = await resolver();
-      // console.log(data);
-      // @ts-ignore
-      const { metadata } = data;
+      const { metadata } = await resolver();
       const postPath = path.slice(11, -3);
-      console.log(getFilesizeInBytes('.' + path));
       return {
-        info: getFilesizeInBytes('.' + path),
+        info: getFileInfo('.' + path),
         meta: metadata,
         path: postPath
       };
     })
   );
-  return allPosts;
 };
 
 export const githubUserInfo = async (githubUsername: string) => {

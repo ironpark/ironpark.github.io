@@ -1,4 +1,4 @@
-import { fetchMarkdownPosts, githubUserInfo } from '$lib/server/article';
+import { fetchMarkdownPosts, githubUserInfo } from '$lib/server/utils';
 
 import type { PageServerLoad } from './$types';
 
