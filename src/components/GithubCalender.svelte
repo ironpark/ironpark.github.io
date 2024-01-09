@@ -1,6 +1,15 @@
-<script lang="js">
-	export let contributions;
-	const darkColor = (count) => {
+<script lang="ts">
+	export let contributions: {
+		totalContributions: number;
+		weeks: {
+			contributionDays: {
+				contributionCount: number;
+				date: string;
+				weekday: number;
+			}[];
+		}[];
+	};
+	const darkColor = (count: number) => {
 		if (count === 0) return 'var(--color-calendar-graph-day-L0-bg)';
 		if (count <= 3) return 'var(--color-calendar-graph-day-L1-bg)';
 		if (count <= 6) return 'var(--color-calendar-graph-day-L2-bg)';
@@ -28,22 +37,24 @@
 		--color-calendar-graph-day-L3-bg: #26a641;
 		--color-calendar-graph-day-L4-bg: #39d353;
 	}
+
 	.contribution-calender {
 		border-radius: 4px;
 		padding: 2px;
-		display: flex;
-		flex-direction: row;
 		align-items: center;
 		background: #0d1117;
+		width: 100%;
+		max-width: 800px;
+		display: flex;
 		.week {
-			display: inline-flex;
+			aspect-ratio: 1 / 7;
+			display: flex;
 			flex-direction: column;
 			align-self: stretch;
+			flex: 1;
 			.day {
-				display: inline-block;
-				width: 10px;
-				height: 10px;
-				margin: 1px;
+				aspect-ratio: 1 / 1;
+				margin: min(calc(100vw / 800), 1px);
 				border-radius: 2px;
 				font-size: 10px;
 				text-align: center;
