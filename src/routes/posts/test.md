@@ -2,14 +2,14 @@
 title: First post of my Blog
 description: this is my first post
 date: '2023-7-29'
-categories:
+tags:
   - sveltekit
   - svelte
   - first
 published: true
 ---
 
-## My First Markdown Blog s
+## My First Markdown Blog
 
 Hello! 👋
 
@@ -17,7 +17,7 @@ Hello! 👋
 
 ```js
 function greet(name: string) {
-console.log(`Hey ${name}!`)
+  console.log(`Hey ${name}!`)
 }
 ```
 
