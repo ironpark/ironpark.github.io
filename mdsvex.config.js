@@ -16,10 +16,7 @@ const config = {
 		dashes: 'oldschool'
 	},
 	remarkPlugins: [remarkMath, remarkAbbr],
-	rehypePlugins: [rehypeKatexSvelte, rehypeSlug, [rehypeAutolinkHeadings, { behavior: 'wrap' }]],
-	layout: {
-		_: path.join(__dirname, './src/components/LayoutDefault.svelte')
-	}
+	rehypePlugins: [rehypeKatexSvelte, rehypeSlug, [rehypeAutolinkHeadings, { behavior: 'wrap' }]]
 };
 
 export default config;
