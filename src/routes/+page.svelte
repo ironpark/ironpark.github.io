@@ -13,22 +13,22 @@
 	<meta name="description" content="웹사이트 설명" />
 </svelte:head>
 
-<div style="display: flex">
+<div style="display: flex;justify-content: center;padding: 10px">
 	<GithubCalender {contributions} />
 </div>
 
 <ul class="posts">
 	{#each posts as post}
 		<li>
-			<article>
-				<h2 class="title"><a href={`${post.path}`}>{post.meta.title}</a></h2>
+			<a class="article" href={`${post.path}`}>
+				<h2 class="title">{post.meta.title}</h2>
 				<div class="tags">
 					{#each post.meta.tags as tag}
 						<a class="tag">{tag}</a>
 					{/each}
 				</div>
 				<time class="published-at">{post.meta.date}</time>
-			</article>
+			</a>
 		</li>
 	{/each}
 </ul>
@@ -37,7 +37,8 @@
 	.posts {
 		list-style: none;
 		padding: 10px;
-		article {
+		.article {
+			display: block;
 			background: #000a16;
 			padding: 10px;
 			border-radius: 10px;
@@ -46,6 +47,11 @@
 				margin: 0;
 				font-size: 1.5rem;
 			}
+			&:hover {
+				background: #001529;
+				scale: 1.02;
+			}
+			transition: 0.2s;
 		}
 	}
 
