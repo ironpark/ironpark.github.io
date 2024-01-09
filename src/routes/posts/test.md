@@ -1,6 +1,6 @@
 ---
-title: First post of my Blog
-description: this is my first post
+title: SvelteKit Blog
+description: 처음만드는 스벨트킷 블로그
 date: '2023-7-29'
 tags:
   - sveltekit
@@ -8,18 +8,5 @@ tags:
   - first
 published: true
 ---
-
-## My First Markdown Blog
-
-Hello! 👋
-
-아래처럼 코드 Syntax Highlight도 지원합니다.
-
-```js
-function greet(name: string) {
-  console.log(`Hey ${name}!`)
-}
-```
-
-위와 같이 소스코드도 넣을 수 있습니다.
-(역슬래쉬는 빼고 넣으셔야 합니다.)
+test
+`TypeScript` + `SvelteKit` + `Markdown` + `Github Pages`

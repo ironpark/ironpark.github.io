@@ -36,11 +36,19 @@
 <style lang="scss">
 	.posts {
 		list-style: none;
-		padding: 0;
+		padding: 10px;
+		article {
+			background: #000a16;
+			padding: 10px;
+			border-radius: 10px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+			.title {
+				margin: 0;
+				font-size: 1.5rem;
+			}
+		}
 	}
-	.title {
-		margin: 0;
-	}
+
 	.published-at {
 		font-size: 0.8rem;
 		color: #666;
@@ -55,15 +63,9 @@
 	}
 	.tag {
 		display: inline-block;
-		padding: 0.2rem 0.5rem;
-		background-color: #131517;
+		padding: 0.1rem 0.4rem;
+		background-color: #003d89;
 		border-radius: 0.2rem;
 		font-size: 14px;
-	}
-	article {
-		background: #000a16;
-		padding: 10px;
-		border-radius: 10px;
-		box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 	}
 </style>
