@@ -1,8 +1,10 @@
 <script>
 	import '../code.css';
 	import '../markdown.scss';
+	import Header from '../components/Header.svelte';
 </script>
 
+<Header />
 <slot />
 
 <style lang="scss">
