@@ -26,6 +26,22 @@ export const fetchMarkdownPosts = async () => {
 	);
 };
 
+export const fetchMarkdownMemos = async () => {
+	const allPostFiles = import.meta.glob('/contents/memos/*.md');
+	const iterablePostFiles = Object.entries(allPostFiles);
+	return await Promise.all(
+		iterablePostFiles.map(async ([path, resolver]) => {
+			// @ts-ignore
+			const { metadata } = await resolver();
+			return {
+				info: getFileInfo('.' + path),
+				meta: metadata,
+				path: '/posts/' + basename(path).split('.')[0]
+			};
+		})
+	);
+};
+
 export const githubUserInfo = async (githubUsername: string) => {
 	const url = 'https://api.github.com/graphql';
 	const queryBody = `query { user(login: "${githubUsername}") { name avatarUrl(size:80) contributionsCollection { contributionCalendar { totalContributions weeks {contributionDays {contributionCount date color}}} } } }`;

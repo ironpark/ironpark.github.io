@@ -8,6 +8,11 @@
 		</div>
 		<ul id="menu">
 			<li>
+				<a href="/memos" title="Index">
+					<span>/Memos</span>
+				</a>
+			</li>
+			<li>
 				<a href="/tools" title="Index">
 					<span>/Tools</span>
 				</a>

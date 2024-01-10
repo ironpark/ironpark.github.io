@@ -1,7 +1,5 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import GithubCalender from '../components/GithubCalender.svelte';
-
 	export let data: PageData;
 	let posts = data.posts;
 	let info = data.userInfo;
@@ -13,11 +11,7 @@
 	<meta name="description" content="웹사이트 설명" />
 </svelte:head>
 
-<div style="display: flex;justify-content: center;padding: 10px">
-	<GithubCalender {contributions} />
-</div>
-
-<ul class="posts">
+<ul class="memos">
 	{#each posts as post}
 		<li>
 			<a class="article" href={`${post.path}`}>
@@ -34,7 +28,7 @@
 </ul>
 
 <style lang="scss">
-	.posts {
+	.memos {
 		list-style: none;
 		padding: 10px;
 		max-width: 800px;
