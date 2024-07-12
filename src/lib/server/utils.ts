@@ -1,6 +1,7 @@
 import fss from 'fs';
 import { basename } from 'path';
 import { GITHUB_TOKEN } from '$env/static/private';
+import { parseFootprint } from '$lib/kicad/footprint';
 const getFileInfo = (filename: string) => {
 	let stats = fss.statSync(filename);
 	return {
@@ -41,7 +42,19 @@ export const fetchMarkdownMemos = async () => {
 		})
 	);
 };
-
+export const getFootprints = async () => {
+	const allFootprintFiles = import.meta.glob('/marbastlib/footprints/*.pretty/*.kicad_mod');
+	const iterableFootprintFiles = Object.entries(allFootprintFiles);
+	return await Promise.all(
+		iterableFootprintFiles.map(async ([path, resolver]) => {
+			const data = fss.readFileSync('.' + path, 'utf8');
+			return {
+				name: basename(path),
+				footprint: parseFootprint(data)!
+			};
+		})
+	);
+};
 export const githubUserInfo = async (githubUsername: string) => {
 	const url = 'https://api.github.com/graphql';
 	const queryBody = `query { user(login: "${githubUsername}") { name avatarUrl(size:80) contributionsCollection { contributionCalendar { totalContributions weeks {contributionDays {contributionCount date color}}} } } }`;

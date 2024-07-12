@@ -37,7 +37,6 @@
 		--color-L3-bg: #26a641;
 		--color-L4-bg: #39d353;
 	}
-
 	.contribution-calender {
 		border-radius: 4px;
 		padding: 2px;

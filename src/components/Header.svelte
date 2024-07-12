@@ -26,10 +26,10 @@
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: space-between;
-		max-width: 1200px;
 		margin-inline-start: auto;
 		margin-inline-end: auto;
-		padding: 10px;
+		padding: 25px 25px;
+		max-width: 1350px;
 	}
 
 	#menu {

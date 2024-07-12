@@ -1,8 +1,8 @@
 import { fetchMarkdownPosts, getFootprints, githubUserInfo } from '$lib/server/utils';
-
+export const ssr = false;
 import type { PageServerLoad } from './$types';
 export const load: PageServerLoad = async () => {
-	const posts = (await fetchMarkdownPosts()).filter((post) => post.meta.published);
-	const userInfo = await githubUserInfo('ironpark');
-	return { posts, userInfo };
+	const footprints = await getFootprints();
+	console.log(footprints);
+	return { footprints };
 };
