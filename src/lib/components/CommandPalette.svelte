@@ -2,7 +2,12 @@
   import { onMount } from "svelte";
   import { fade, scale } from "svelte/transition";
   import { goto } from "$app/navigation";
-
+  import {
+    setLocale,
+    getLocale,
+    locales,
+    localizeHref,
+  } from "$lib/paraglide/runtime";
   // Import blog posts metadata
   const blogPosts = Object.entries(
     import.meta.glob("/src/content/blog/*.md", { eager: true })
@@ -34,28 +39,28 @@
       id: "home",
       title: "Go to Home",
       description: "Navigate to the home page",
-      action: () => goto("/"),
+      action: () => goto(localizeHref("/")),
       category: "Navigation",
     },
     {
       id: "blog",
       title: "Go to Blog",
       description: "View all blog posts",
-      action: () => goto("/blog"),
+      action: () => goto(localizeHref("/blog")),
       category: "Navigation",
     },
     {
       id: "projects",
       title: "Go to Projects",
       description: "View my open-source projects",
-      action: () => goto("/projects"),
+action: () => goto(localizeHref("/projects")),
       category: "Navigation",
     },
     {
       id: "about",
       title: "Go to About",
       description: "Learn more about me",
-      action: () => goto("/about"),
+      action: () => goto(localizeHref("/about")),
       category: "Navigation",
     },
   ];
@@ -72,7 +77,7 @@
       id: "rss",
       title: "RSS Feed",
       description: "Subscribe to RSS feed",
-      action: () => goto("/rss.xml"),
+      action: () => goto(localizeHref("/rss.xml")),
       category: "External",
     },
   ];
@@ -83,7 +88,7 @@
     description:
       post.description ||
       `Published on ${new Date(post.date).toLocaleDateString()}`,
-    action: () => goto(`/blog/${post.slug}`),
+    action: () => goto(localizeHref(`/blog/${post.slug}`)),
     category: "Blog Posts",
   }));
 
