@@ -28,13 +28,13 @@
       </p>
       <div class="flex gap-4 pt-4">
         <a
-          href="/blog"
+          href={localizeHref("/blog")}
           class="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:opacity-90 transition-opacity"
         >
           {m.home_read_blog_button()}
         </a>
         <a
-          href="/about"
+          href={localizeHref("/about")}
           class="inline-flex items-center justify-center rounded-md border border-border px-6 py-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
         >
           {m.home_about_button()}
@@ -95,7 +95,7 @@
 
     <div class="pt-8">
       <a
-        href="/blog"
+        href={localizeHref("/blog")}
         class="inline-flex items-center text-sm font-medium text-primary hover:underline"
       >
         {m.home_view_all_posts()}
