@@ -21,6 +21,9 @@
     { href: "/projects", label: m.nav_projects() },
     { href: "/about", label: m.nav_about() },
   ]);
+  locales.forEach((locale) => {
+    console.log(page.url.pathname, locale);
+  });
 </script>
 
 <ModeWatcher />
