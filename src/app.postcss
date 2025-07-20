@@ -1,0 +1,78 @@
+/* Additional styles for MDsveX code highlighting */
+.prose pre {
+  @apply bg-zinc-900 text-zinc-50 p-4 rounded-lg overflow-x-auto my-6;
+}
+
+.prose pre code {
+  @apply bg-transparent p-0 text-sm;
+}
+
+.prose :where(code):not(:where([class~="not-prose"] *)) {
+  @apply bg-muted px-1.5 py-0.5 rounded text-sm font-mono;
+}
+
+/* Syntax highlighting for MDsveX */
+.prose .language-javascript,
+.prose .language-typescript,
+.prose .language-bash,
+.prose .language-css,
+.prose .language-html,
+.prose .language-svelte {
+  @apply text-zinc-50;
+}
+
+/* Token styles */
+.prose .token.comment,
+.prose .token.prolog,
+.prose .token.doctype,
+.prose .token.cdata {
+  @apply text-zinc-500;
+}
+
+.prose .token.punctuation {
+  @apply text-zinc-400;
+}
+
+.prose .token.property,
+.prose .token.tag,
+.prose .token.boolean,
+.prose .token.number,
+.prose .token.constant,
+.prose .token.symbol,
+.prose .token.deleted {
+  @apply text-rose-400;
+}
+
+.prose .token.selector,
+.prose .token.attr-name,
+.prose .token.string,
+.prose .token.char,
+.prose .token.builtin,
+.prose .token.inserted {
+  @apply text-emerald-400;
+}
+
+.prose .token.operator,
+.prose .token.entity,
+.prose .token.url,
+.language-css .token.string,
+.style .token.string {
+  @apply text-amber-400;
+}
+
+.prose .token.atrule,
+.prose .token.attr-value,
+.prose .token.keyword {
+  @apply text-sky-400;
+}
+
+.prose .token.function,
+.prose .token.class-name {
+  @apply text-purple-400;
+}
+
+.prose .token.regex,
+.prose .token.important,
+.prose .token.variable {
+  @apply text-amber-400;
+}
