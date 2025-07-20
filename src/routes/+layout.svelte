@@ -41,7 +41,7 @@
     >
       <nav class="flex items-center gap-6">
         <a
-          href="/"
+          href={localizeHref("/")}
           class="font-semibold text-lg hover:text-primary transition-colors"
         >
           {m.site_title()}
