@@ -2,7 +2,7 @@
   import { fade } from "svelte/transition";
   import type { PageData } from "./$types";
   import * as m from "$lib/paraglide/messages";
-  import { getLocale } from "$lib/paraglide/runtime";
+  import { getLocale, localizeHref } from "$lib/paraglide/runtime";
 
   interface Props {
     data: PageData;
@@ -52,7 +52,7 @@
     <div class="grid gap-8 md:gap-12">
       {#each recentPosts as post}
         <article class="group">
-          <a href="/blog/{post.slug}" class="block space-y-3">
+          <a href={localizeHref(`/blog/${post.slug}`)} class="block space-y-3">
             <time class="text-sm text-muted-foreground">
               {new Date(post.date).toLocaleDateString("en-US", {
                 year: "numeric",
