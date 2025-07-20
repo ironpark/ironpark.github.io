@@ -61,11 +61,37 @@
         </div>
       </nav>
 
-      <div class="flex items-center gap-2">
-        <!-- Command Palette -->
+      <!-- Command Palette (Mobile) - Center -->
+      <div class="md:hidden w-full flex justify-center px-5">
         <button
           onclick={() => commandPalette?.open()}
-          class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background hover:bg-accent hover:text-accent-foreground h-9 px-3 border"
+          class="md:hidden inline-flex items-center justify-start rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background hover:bg-accent hover:text-accent-foreground h-9 border w-full"
+          aria-label="Open command palette"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="ml-2 mr-2"
+          >
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+          <span class="inline-block text-sm">Search</span>
+        </button>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <!-- Command Palette (Desktop) -->
+        <button
+          onclick={() => commandPalette?.open()}
+          class="hidden md:inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background hover:bg-accent hover:text-accent-foreground h-9 px-3 border"
           aria-label="Open command palette"
         >
           <svg

@@ -170,9 +170,9 @@
     onclick={handleBackdropClick}
     transition:fade={{ duration: 150 }}
   >
-    <div class="fixed left-[50%] top-[50%] z-50 w-full max-w-2xl translate-x-[-50%] translate-y-[-50%]">
+    <div class="fixed inset-x-0 bottom-0 z-50 px-4 pb-4 sm:inset-auto sm:left-[50%] sm:top-[50%] sm:w-full sm:max-w-2xl sm:translate-x-[-50%] sm:translate-y-[-50%] sm:px-0 sm:pb-0">
       <div 
-        class="bg-background border rounded-lg shadow-lg"
+        class="bg-background border rounded-lg shadow-lg w-full"
         transition:scale={{ duration: 150, start: 0.95 }}
       >
         <div class="flex items-center border-b px-3">
@@ -201,7 +201,7 @@
           </kbd>
         </div>
         
-        <div class="max-h-[400px] overflow-y-auto p-2">
+        <div class="max-h-[50vh] sm:max-h-[400px] overflow-y-auto p-2">
           {#if filteredCommands.length === 0}
             <div class="py-6 text-center text-sm text-muted-foreground">
               No results found.
