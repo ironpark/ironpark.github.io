@@ -44,13 +44,3 @@ async function encryptAES(plainText, password) {
   
   return btoa(String.fromCharCode(...combined));
 }
-
-// Use a static password for client-side decryption
-const PASSWORD = 'your-static-password-here';
-const LINKEDIN_URL = 'https://www.linkedin.com/in/ironkr';
-
-(async () => {
-  const encrypted = await encryptAES(LINKEDIN_URL, PASSWORD);
-  console.log('Encrypted LinkedIn URL:');
-  console.log(encrypted);
-})();

@@ -10,7 +10,7 @@
     localizeHref,
   } from "$lib/paraglide/runtime";
   import * as m from "$lib/paraglide/messages";
-
+  import { Command } from "@lucide/svelte";
   let { children } = $props();
   let commandPalette: CommandPalette;
   let currentLocale = $state(getLocale());
@@ -21,9 +21,6 @@
     { href: "/projects", label: m.nav_projects() },
     { href: "/about", label: m.nav_about() },
   ]);
-  locales.forEach((locale) => {
-    console.log(page.url.pathname, locale);
-  });
 </script>
 
 <ModeWatcher />
@@ -111,9 +108,10 @@
           </svg>
           <span class="hidden sm:inline-block">Search</span>
           <kbd
-            class="ml-2 pointer-events-none hidden sm:inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground"
+            class="ml-2 bg-muted text-muted-foreground pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100"
           >
-            <span class="text-xs">⌘</span>K
+            <Command class="h-3 w-3" /> +
+            <span class="text-xs">K</span>
           </kbd>
         </button>
 

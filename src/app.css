@@ -115,7 +115,7 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    font-family: "Noto Sans KR", sans-serif;
+    font-family: "Noto Sans KR", "Noto Sans JP", "Noto Sans", sans-serif;
   }
   body {
     @apply bg-background text-foreground;
