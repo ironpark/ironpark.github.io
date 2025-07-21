@@ -8,13 +8,35 @@
     locales,
     localizeHref,
   } from "$lib/paraglide/runtime";
-  // Import blog posts metadata
-  const blogPosts = Object.entries(
-    import.meta.glob("/src/content/blog/*.md", { eager: true })
-  ).map(([path, module]: [string, any]) => ({
-    slug: path.split("/").pop()?.replace(".md", "") || "",
-    ...module.metadata,
-  }));
+
+  // 로케일에 따라 블로그 포스트를 다르게 import
+  const locale = getLocale();
+
+  let blogPosts: any[] = [];
+
+  if (locale === "en") {
+    blogPosts = Object.entries(
+      import.meta.glob("/src/content/blog/translate/*.en.md", { eager: true })
+    ).map(([path, module]: [string, any]) => ({
+      slug: path.split("/").pop()?.replace(".en.md", "") || "",
+      ...module.metadata,
+    }));
+  } else if (locale === "jp") {
+    blogPosts = Object.entries(
+      import.meta.glob("/src/content/blog/translate/*.jp.md", { eager: true })
+    ).map(([path, module]: [string, any]) => ({
+      slug: path.split("/").pop()?.replace(".jp.md", "") || "",
+      ...module.metadata,
+    }));
+  } else {
+    // 기본(한국어)
+    blogPosts = Object.entries(
+      import.meta.glob("/src/content/blog/*.md", { eager: true })
+    ).map(([path, module]: [string, any]) => ({
+      slug: path.split("/").pop()?.replace(".md", "") || "",
+      ...module.metadata,
+    }));
+  }
 
   interface Command {
     id: string;
@@ -37,28 +59,28 @@
   const navigationCommands: Command[] = [
     {
       id: "home",
-      title: "Go to Home",
+      title: "/home",
       description: "Navigate to the home page",
       action: () => goto(localizeHref("/")),
       category: "Navigation",
     },
     {
       id: "blog",
-      title: "Go to Blog",
+      title: "/blog",
       description: "View all blog posts",
       action: () => goto(localizeHref("/blog")),
       category: "Navigation",
     },
     {
       id: "projects",
-      title: "Go to Projects",
+      title: "/projects",
       description: "View my open-source projects",
-action: () => goto(localizeHref("/projects")),
+      action: () => goto(localizeHref("/projects")),
       category: "Navigation",
     },
     {
       id: "about",
-      title: "Go to About",
+      title: "/about",
       description: "Learn more about me",
       action: () => goto(localizeHref("/about")),
       category: "Navigation",
@@ -68,14 +90,14 @@ action: () => goto(localizeHref("/projects")),
   const externalCommands: Command[] = [
     {
       id: "github",
-      title: "Open GitHub",
+      title: "/github",
       description: "Visit my GitHub profile",
       action: () => window.open("https://github.com/ironpark", "_blank"),
       category: "External",
     },
     {
       id: "rss",
-      title: "RSS Feed",
+      title: "/rss",
       description: "Subscribe to RSS feed",
       action: () => goto(localizeHref("/rss.xml")),
       category: "External",
@@ -328,7 +350,7 @@ action: () => goto(localizeHref("/projects")),
                       : 'hover:bg-accent hover:text-accent-foreground'}"
                   >
                     <div class="flex flex-col items-start gap-0.5">
-                      <span class="font-medium">{command.title}</span>
+                      <span class="text-xs font-bold">{command.title}</span>
                       {#if command.description}
                         <span class="text-xs text-muted-foreground">
                           {command.description}
