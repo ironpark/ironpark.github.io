@@ -24,7 +24,8 @@ const config = {
 			fallback: '404.html'
 		}),
 		prerender: {
-			handleHttpError: 'warn'
+			handleHttpError: 'warn',
+			entries: ['*', '/sitemap.xml', '/rss.xml']
 		}
 	},
 	extensions: ['.svelte', '.md', '.svx']
