@@ -14,7 +14,7 @@
   let { children } = $props();
   let commandPalette: CommandPalette;
   let currentLocale = $state(getLocale());
-
+  let locale = getLocale();
   const navItems = $derived([
     { href: "/", label: m.nav_home() },
     { href: "/blog", label: m.nav_blog() },
@@ -22,6 +22,27 @@
     { href: "/about", label: m.nav_about() },
   ]);
 </script>
+
+<svelte:head>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  {#if locale === "ko"}
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+  {:else if locale === "jp"}
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+  {:else}
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+  {/if}
+</svelte:head>
 
 <ModeWatcher />
 <div style="display:none">

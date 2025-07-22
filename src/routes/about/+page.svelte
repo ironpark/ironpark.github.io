@@ -3,7 +3,7 @@
   import { decryptAES } from "$lib/utils/crypto";
   import type { PageData } from "./$types";
   import { getLocale } from "$lib/paraglide/runtime";
-
+  import "devicon/devicon.min.css";
   let { data }: { data: PageData } = $props();
   const locale = getLocale();
 
