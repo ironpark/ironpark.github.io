@@ -35,6 +35,7 @@ interface AllPostVersions {
 }
 
 export const load: PageLoad = async ({ params }) => {
+  
   // Get current locale
   const locale = getLocale();
   
@@ -89,6 +90,7 @@ export const load: PageLoad = async ({ params }) => {
   }
   
   return {
+    slug: params.slug,
     content: selectedPost!.content,
     metadata: selectedPost!.metadata,
     // Include information about available translations

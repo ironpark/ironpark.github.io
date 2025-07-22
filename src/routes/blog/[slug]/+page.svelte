@@ -5,6 +5,7 @@
   import Giscus from "@giscus/svelte";
   import { theme, mode } from "mode-watcher";
   import { getLocale } from "$lib/paraglide/runtime";
+  import { page } from "$app/state";
   interface Props {
     data: PageData;
   }
@@ -26,14 +27,14 @@
     repoId="MDEwOlJlcG9zaXRvcnkzNDgxMjA1Mg=="
     category="Posts"
     categoryId="DIC_kwDOAhMwlM4CtLG7"
-    mapping="pathname"
+    mapping="specific"
     reactionsEnabled="1"
     emitMetadata="0"
     inputPosition="top"
     theme={mode.current === "dark" ? "noborder_dark" : "noborder_light"}
     lang={locale === "ko" ? "ko" : locale === "jp" ? "ja" : "en"}
     loading="lazy"
-    term={data.metadata.slug}
+    term={data.slug}
   />
 </BlogLayout>
 
