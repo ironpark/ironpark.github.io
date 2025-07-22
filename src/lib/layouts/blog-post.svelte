@@ -3,7 +3,7 @@
   import * as m from "$lib/paraglide/messages";
 
   import type { Snippet } from "svelte";
-
+  import { getLocale } from "$lib/paraglide/runtime";
   interface Props {
     title: string;
     date: string;
@@ -15,7 +15,7 @@
     };
     children?: Snippet;
   }
-
+  const locale = getLocale();
   let {
     title,
     date,
@@ -115,7 +115,7 @@
       <div class="flex gap-4">
         <a
           href="https://twitter.com/intent/tweet?url={encodeURIComponent(
-            `https://yourdomain.com/blog/${title}`
+            `https://ironpark.github.io/${locale}/blog/${title}`
           )}&text={encodeURIComponent(title)}"
           target="_blank"
           rel="noopener noreferrer"
