@@ -21,10 +21,15 @@
     { href: "/projects", label: m.nav_projects() },
     { href: "/about", label: m.nav_about() },
   ]);
+  const title = $derived(
+    page.url.pathname.split("/").at(-1)?.toUpperCase() || ""
+  );
 </script>
 
 <svelte:head>
+  <title>{`IRONPARK | ${title}`}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
+  {/* @ts-ignore */ null}
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   {#if locale === "ko"}
     <link

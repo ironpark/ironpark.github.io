@@ -14,6 +14,11 @@
   let { data }: Props = $props();
 </script>
 
+<svelte:head>
+  <title>{`IRONPARK | ${data.metadata.title}`}</title>
+  <meta name="description" content={data.metadata.description} />
+</svelte:head>
+
 <BlogLayout {...data.metadata}>
   <!-- <svelte:component this={data.content} /> -->
   {@const Content = data.content}

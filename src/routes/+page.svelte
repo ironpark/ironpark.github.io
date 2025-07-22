@@ -13,9 +13,15 @@
 
   const locale = getLocale();
   const localeKey = locale === "ko" ? "ko" : locale === "jp" ? "jp" : "en";
-
+  const description = m.home_welcome_description();
+  const title = `${m.site_title()} | ${m.home_welcome_title()}`;
   // Filter posts by current locale
 </script>
+
+<svelte:head>
+  <title>{title}</title>
+  <meta name="description" content={description} />
+</svelte:head>
 
 <div class="container px-4 mx-auto max-w-6xl">
   <section class="py-20 md:py-32 space-y-8">
