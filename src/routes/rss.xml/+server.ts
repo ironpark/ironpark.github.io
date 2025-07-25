@@ -53,7 +53,6 @@ export const GET: RequestHandler = async () => {
     <title>${m.site_title()}</title>
     <link>${baseUrl}</link>
     <description>${m.blog_description()}</description>
-    <atom:link href="${baseUrl}/rss" rel="self" type="application/rss+xml" />
     <language>${language(locale)}</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     ${posts.map(post => `
