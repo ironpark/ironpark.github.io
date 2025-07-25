@@ -6,7 +6,9 @@
   import { getLocale } from "$lib/paraglide/runtime";
   interface Props {
     title: string;
-    date: string;
+    subTitle: string;
+    created: string;
+    updated: string;
     tags?: string[];
     description?: string;
     reading?: {
@@ -16,7 +18,15 @@
     children?: Snippet;
   }
   const locale = getLocale();
-  let { title, date, tags = [], subTitle, reading, children }: Props = $props();
+  let {
+    title,
+    created,
+    updated,
+    tags = [],
+    subTitle,
+    reading,
+    children,
+  }: Props = $props();
 </script>
 
 <article
@@ -26,7 +36,7 @@
   <header class="space-y-4 mb-8">
     <div class="flex items-center gap-4 text-sm text-muted-foreground">
       <time>
-        {new Date(date).toLocaleDateString("en-US", {
+        {new Date(created).toLocaleDateString("en-US", {
           year: "numeric",
           month: "long",
           day: "numeric",
