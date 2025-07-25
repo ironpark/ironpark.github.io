@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import type { PageLoad, EntryGenerator } from './$types';
+import type { PageServerLoad, EntryGenerator } from './$types';
 import { getLocale } from '$lib/paraglide/runtime.js';
 import { extractFirstImageFromRaw } from '$lib/utils/extractFirstImage.js';
 
@@ -54,7 +54,7 @@ export const entries: EntryGenerator = () => {
 };
 
 
-export const load: PageLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params }) => {
   
   // Get current locale
   const locale = getLocale();
