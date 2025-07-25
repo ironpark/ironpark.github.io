@@ -11,8 +11,8 @@ series: 똑똑한 블로그 만들기
 categories: [Thoughts]
 tags: [github-pages,markdown,svelte-kit]
 lang: ko
+thumbnail: 'https://ironpark.github.io/posts/my-ideal-dev-blog/title.png'
 ---
-
 ![타이틀 이미지](/posts/my-ideal-dev-blog/title.png)
 ## 나의 공간을 꿈꾸며
 

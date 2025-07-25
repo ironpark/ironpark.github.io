@@ -15,6 +15,7 @@ interface PostMetadata {
   categories?: string[];
   tags?: string[];
   lang?: string;
+  thumbnail?: string;
   reading?: {
     text: string;
     time: number;
@@ -24,8 +25,8 @@ interface PostMetadata {
 const getPostsByLocale = async (locale: string) => {
   if (locale === 'ko') {
     return await import.meta.glob('/src/content/blog/*.md');
-  } else if (locale === 'jp') {
-    return await import.meta.glob('/src/content/blog/translate/*.jp.md');
+  } else if (locale === 'ja') {
+    return await import.meta.glob('/src/content/blog/translate/*.ja.md');
   } else {
     return await import.meta.glob('/src/content/blog/translate/*.en.md');
   }
@@ -47,7 +48,7 @@ export const load: PageServerLoad = async ({ request }) => {
         
         if (path.includes('/translate/')) {
           // Remove language suffix for translated files
-          slug = filename.replace(/\.(en|jp)\.md$/, '');
+          slug = filename.replace(/\.(en|ja)\.md$/, '');
         } else {
           // Korean file
           slug = filename.replace('.md', '');

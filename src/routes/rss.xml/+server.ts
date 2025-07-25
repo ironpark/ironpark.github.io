@@ -8,8 +8,8 @@ const getPosts = async (locale:string) => {
     return await import.meta.glob('/src/content/blog/*.md')
   } else if (locale === 'en') {
     return await import.meta.glob('/src/content/blog/translate/*.en.md')
-  } else if (locale === 'jp') {
-    return await import.meta.glob('/src/content/blog/translate/*.jp.md')
+  } else if (locale === 'ja') {
+    return await import.meta.glob('/src/content/blog/translate/*.ja.md')
   }
   return {}
 }
@@ -20,15 +20,15 @@ export const GET: RequestHandler = async () => {
       return 'ko-kr'
     } else if (locale === 'en') {
       return 'en-us'
-    } else if (locale === 'jp') {
+    } else if (locale === 'ja') {
       return 'ja-jp'
     }
   }
   let baseUrl = 'https://ironpark.github.io'
   if (locale === 'en') {
     baseUrl = 'https://ironpark.github.io/en'
-  } else if (locale === 'jp') {
-    baseUrl = 'https://ironpark.github.io/jp'
+  } else if (locale === 'ja') {
+    baseUrl = 'https://ironpark.github.io/ja'
   }
   const files = await getPosts(locale)
   const posts = await Promise.all(
@@ -36,7 +36,7 @@ export const GET: RequestHandler = async () => {
       const { metadata } = await resolver() as { metadata: any };
       let slug = path.split('/').pop()?.replace('.md', '');
       if (locale != 'ko'){
-        slug = slug?.replace('.en','').replace('.jp','')
+        slug = slug?.replace('.en','').replace('.ja','')
       }
       return {
         ...metadata,

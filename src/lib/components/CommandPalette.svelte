@@ -21,11 +21,11 @@
       slug: path.split("/").pop()?.replace(".en.md", "") || "",
       ...module.metadata,
     }));
-  } else if (locale === "jp") {
+  } else if (locale === "ja") {
     blogPosts = Object.entries(
-      import.meta.glob("/src/content/blog/translate/*.jp.md", { eager: true })
+      import.meta.glob("/src/content/blog/translate/*.ja.md", { eager: true })
     ).map(([path, module]: [string, any]) => ({
-      slug: path.split("/").pop()?.replace(".jp.md", "") || "",
+      slug: path.split("/").pop()?.replace(".ja.md", "") || "",
       ...module.metadata,
     }));
   } else {

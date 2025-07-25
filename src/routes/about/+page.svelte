@@ -49,7 +49,7 @@
       <h1 class="text-4xl font-bold">Just a developer.</h1>
       {#if locale === "ko"}
         <p class="text-xl text-muted-foreground">안녕하세요 :P</p>
-      {:else if locale === "jp"}
+      {:else if locale === "ja"}
         <p class="text-xl text-muted-foreground">こんにちは :P</p>
       {:else}
         <p class="text-xl text-muted-foreground">Hello :P</p>

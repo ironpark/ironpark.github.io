@@ -11,8 +11,8 @@ series: Build A Smart Blog
 categories: [Thoughts]
 tags: [github-pages,markdown,svelte-kit]
 lang: ja
+thumbnail: 'https://ironpark.github.io/posts/my-ideal-dev-blog/title.png'
 ---
-
 ![タイトル画像](/posts/my-ideal-dev-blog/title.png)
 ## 自分の空間を夢見て
 

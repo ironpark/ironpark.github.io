@@ -26,8 +26,7 @@
   <meta property="og:url" content={page.url.href} />
   <meta
     property="og:image"
-    content={data.metadata.ogImage ||
-      "https://ironpark.github.io/og-default.png"}
+    content={data.ogImage || "https://ironpark.github.io/og-default.png"}
   />
 </svelte:head>
 
@@ -49,7 +48,7 @@
     emitMetadata="0"
     inputPosition="top"
     theme={mode.current === "dark" ? "noborder_dark" : "noborder_light"}
-    lang={locale === "ko" ? "ko" : locale === "jp" ? "ja" : "en"}
+    lang={locale === "ko" ? "ko" : locale === "ja" ? "ja" : "en"}
     loading="lazy"
     term={data.slug}
   />

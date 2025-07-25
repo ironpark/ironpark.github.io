@@ -11,8 +11,8 @@ series: Build A Smart Blog
 category: Thoughts
 tags: [github-pages,markdown,svelte-kit]
 lang: en
+thumbnail: 'https://ironpark.github.io/posts/my-ideal-dev-blog/title.png'
 ---
-
 ![Title Image](/posts/my-ideal-dev-blog/title.png)
 ## Dreaming of My Own Space
 

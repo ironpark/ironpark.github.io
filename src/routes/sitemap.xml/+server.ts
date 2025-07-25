@@ -5,7 +5,7 @@ import path from 'path';
 export const prerender = true;
 
 const BASE_URL = 'https://ironpark.github.io';
-const LOCALES = ['ko', 'en', 'jp'];
+const LOCALES = ['ko', 'en', 'ja'];
 const BASE_LOCALE = 'ko';
 
 interface SitemapEntry {
@@ -57,7 +57,7 @@ export const GET: RequestHandler = async () => {
 	const blogFiles = import.meta.glob([
 		'/src/content/blog/*.md',
 		'/src/content/blog/translate/*.en.md',
-		'/src/content/blog/translate/*.jp.md'
+		'/src/content/blog/translate/*.ja.md'
 	]);
 	
 	// Extract blog posts with modification dates
@@ -66,7 +66,7 @@ export const GET: RequestHandler = async () => {
 	for (const [filePath] of Object.entries(blogFiles)) {
 		const filename = filePath.split('/').pop() || '';
 		const slug = filename
-			.replace(/\.(en|jp)\.md$/, '')
+			.replace(/\.(en|ja)\.md$/, '')
 			.replace('.md', '');
 		
 		// Convert the import.meta.glob path to actual file system path
