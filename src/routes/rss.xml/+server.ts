@@ -45,7 +45,7 @@ export const GET: RequestHandler = async () => {
     })
   );  
   // Sort posts by date (newest first)
-  posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  posts.sort((a, b) => new Date(b.created).getTime() - new Date(a.created).getTime());
   
   const rss = `<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
@@ -61,7 +61,7 @@ export const GET: RequestHandler = async () => {
       <title>${escapeXml(post.title)}</title>
       <link>${baseUrl}/blog/${post.slug}</link>
       <description>${escapeXml(post.description || '')}</description>
-      <pubDate>${new Date(post.date).toUTCString()}</pubDate>
+      <pubDate>${new Date(post.created).toUTCString()}</pubDate>
       <guid isPermaLink="true">${baseUrl}/blog/${post.slug}</guid>
     </item>`).join('')}
   </channel>
