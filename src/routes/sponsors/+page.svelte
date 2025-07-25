@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { fade } from "svelte/transition";
   import SponsorHallOfFame from "$lib/components/SponsorHallOfFame.svelte";
   import * as m from "$lib/paraglide/messages";
 
@@ -28,16 +29,18 @@
 </svelte:head>
 
 <div class="container mx-auto max-w-6xl px-4 py-12">
-  <div class="text-center mb-12">
-    <h1 class="text-4xl font-bold mb-4">{m.sponsors_title()} 🏆</h1>
-    <p class="text-lg text-muted-foreground max-w-2xl mx-auto">
-      {#if sponsors.length === 0}
-        {m.sponsors_description_empty()}
-      {:else}
-        {m.sponsors_description_with_sponsors()}
-      {/if}
-    </p>
-  </div>
+  <div class="space-y-8" in:fade={{ duration: 300 }}>
+    <div class="text-center space-y-4">
+      <h1 class="text-4xl font-bold">{m.sponsors_title()} 🏆</h1>
+      <p class="text-lg text-muted-foreground max-w-2xl mx-auto">
+        {#if sponsors.length === 0}
+          {m.sponsors_description_empty()}
+        {:else}
+          {m.sponsors_description_with_sponsors()}
+        {/if}
+      </p>
+    </div>
 
-  <SponsorHallOfFame {sponsors} />
+    <SponsorHallOfFame {sponsors} />
+  </div>
 </div>
