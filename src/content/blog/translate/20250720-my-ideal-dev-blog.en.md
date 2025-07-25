@@ -1,10 +1,16 @@
 ---
-title: Building My Own Blog
-date: 2025-07-20
+created: 2025-07-20T00:00
 updated: 2025-07-25T08:12
-tags: [github-pages,markdown,svelte-kit]
+published: true
+
+title: Building My Own Blog
+subTitle: What makes an ideal blog?
+description: 'After multiple failed attempts, I finally found my ideal blog setup. Using GitHub Pages and SvelteKit to achieve cost minimization, data ownership, unlimited customization, and seamless writing with Obsidian and Markdown automation. A journey of creating a truly independent space without platform dependency, and the philosophical reflection on the difference between ideal tools and an ideal blog.'
+
+series: Build A Smart Blog
 category: Thoughts
-description: What makes an ideal blog?
+tags: [github-pages,markdown,svelte-kit]
+lang: en
 ---
 
 ![Title Image](/posts/my-ideal-dev-blog/title.png)

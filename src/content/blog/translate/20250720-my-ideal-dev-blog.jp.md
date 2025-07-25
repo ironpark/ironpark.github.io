@@ -1,10 +1,16 @@
 ---
-title: 自分だけのブログを作る
-date: 2025-07-20
+created: 2025-07-20T00:00
 updated: 2025-07-25T08:12
+published: true
+
+title: 自分だけのブログを作る
+subTitle: 理想的なブログの条件とは何か
+description: '何度もの試行錯誤の末に見つけた、自分だけの理想的なブログ作り。GitHub PagesとSvelteKitの組み合わせでコスト最小化、データ所有権の確保、自由なカスタマイズ、そしてObsidianとマークダウンを活用した便利な執筆環境を実現。プラットフォームに依存しない真の自分の空間を作る過程と、その中で気づいた理想的なツールと理想的なブログの違いについての考察。'
+
+series: Build A Smart Blog
+categories: [Thoughts]
 tags: [github-pages,markdown,svelte-kit]
-category: Thoughts
-description: 理想的なブログの条件とは何か
+lang: ja
 ---
 
 ![タイトル画像](/posts/my-ideal-dev-blog/title.png)

@@ -16,14 +16,7 @@
     children?: Snippet;
   }
   const locale = getLocale();
-  let {
-    title,
-    date,
-    tags = [],
-    description,
-    reading,
-    children,
-  }: Props = $props();
+  let { title, date, tags = [], subTitle, reading, children }: Props = $props();
 </script>
 
 <article
@@ -49,9 +42,9 @@
       {title}
     </h1>
 
-    {#if description}
+    {#if subTitle}
       <p class="text-xl text-muted-foreground">
-        {description}
+        {subTitle}
       </p>
     {/if}
 

@@ -17,6 +17,18 @@
 <svelte:head>
   <title>{`IRONPARK | ${data.metadata.title}`}</title>
   <meta name="description" content={data.metadata.description} />
+
+  <!-- Open Graph tags -->
+  <meta property="og:title" content={data.metadata.title} />
+  <meta property="og:site_name" content="IRONPARK" />
+  <meta property="og:description" content={data.metadata.description} />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content={page.url.href} />
+  <meta
+    property="og:image"
+    content={data.metadata.ogImage ||
+      "https://ironpark.github.io/og-default.png"}
+  />
 </svelte:head>
 
 <BlogLayout {...data.metadata}>
