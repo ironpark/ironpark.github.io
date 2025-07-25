@@ -2,7 +2,7 @@
   import { fade } from "svelte/transition";
   import type { PageData } from "./$types";
   import * as m from "$lib/paraglide/messages";
-  import { getLocale, localizeHref } from "$lib/paraglide/runtime";
+  import { localizeHref } from "$lib/paraglide/runtime";
 
   interface Props {
     data: PageData;
@@ -11,8 +11,6 @@
   let { data }: Props = $props();
   let { recentPosts } = data;
 
-  const locale = getLocale();
-  const localeKey = locale === "ko" ? "ko" : locale === "jp" ? "jp" : "en";
   const description = m.home_welcome_description();
   const title = `${m.site_title()} | ${m.home_welcome_title()}`;
   // Filter posts by current locale
@@ -60,7 +58,7 @@
         <article class="group">
           <a href={localizeHref(`/blog/${post.slug}`)} class="block space-y-3">
             <time class="text-sm text-muted-foreground">
-              {new Date(post.date).toLocaleDateString("en-US", {
+              {new Date(post.created).toLocaleDateString("en-US", {
                 year: "numeric",
                 month: "long",
                 day: "numeric",
@@ -72,7 +70,7 @@
               {post.title}
             </h3>
             <p class="text-muted-foreground line-clamp-2">
-              {post.description || post.excerpt || ""}
+              {post.subTitle || ""}
             </p>
             <span
               class="inline-flex items-center text-sm font-medium text-primary"
