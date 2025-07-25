@@ -20,5 +20,12 @@
 	"home_about_button": "紹介",
 	"home_recent_posts_title": "最近の投稿",
 	"home_recent_posts_subtitle": "最新の記事",
-	"home_view_all_posts": "すべての投稿を表示"
+	"home_view_all_posts": "すべての投稿を表示",
+	"nav_sponsors": "スポンサー",
+	"sponsors_title": "スポンサー殿堂",
+	"sponsors_empty_title": "まだスポンサーがいません",
+	"sponsors_empty_description": "私の執筆とオープンソースプロジェクトをサポートし、より多くの価値あるコンテンツとツールを作ることを支援してください！",
+	"sponsors_become_sponsor": "スポンサーになる",
+	"sponsors_description_empty": "この旅に参加してくださる素晴らしいスポンサーの皆様に乾杯！ 🥂",
+	"sponsors_description_with_sponsors": "私のオープンソースの作業をサポートしてくださる素晴らしいスポンサーの皆様に感謝いたします！"
 }

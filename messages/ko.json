@@ -20,5 +20,12 @@
 	"home_about_button": "소개",
 	"home_recent_posts_title": "최근 게시물",
 	"home_recent_posts_subtitle": "최신 글",
-	"home_view_all_posts": "모든 게시물 보기"
+	"home_view_all_posts": "모든 게시물 보기",
+	"nav_sponsors": "후원자",
+	"sponsors_title": "후원자 명예의 전당",
+	"sponsors_empty_title": "아직 후원자가 없습니다",
+	"sponsors_empty_description": "제 글쓰기와 오픈소스 프로젝트를 지원하여 더 많은 가치 있는 콘텐츠와 도구를 만들 수 있도록 도와주세요!",
+	"sponsors_become_sponsor": "후원하기",
+	"sponsors_description_empty": "이 여정에 함께할 멋진 후원자들을 위해 건배! 🥂",
+	"sponsors_description_with_sponsors": "제 오픈소스 작업을 지원해주는 모든 훌륭한 후원자들에게 감사드립니다!"
 }

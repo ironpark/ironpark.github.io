@@ -19,6 +19,7 @@
     { href: "/", label: m.nav_home() },
     { href: "/blog", label: m.nav_blog() },
     { href: "/projects", label: m.nav_projects() },
+    { href: "/sponsors", label: m.nav_sponsors() },
     { href: "/about", label: m.nav_about() },
   ]);
   const title = $derived(
