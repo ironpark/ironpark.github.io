@@ -4,6 +4,7 @@ on:
   push:
     branches: ["master"]
   workflow_dispatch:
+  workflow_call:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
@@ -23,12 +24,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          path: ./posts
+          ref: auto-sync
       - uses: actions/configure-pages@v5
         id: pages
       - uses: pnpm/action-setup@v4
         name: Install pnpm
         with:
-          version: 10
+          version: 10.12.4
           run_install: false
       - uses: actions/setup-node@v4
         with:
