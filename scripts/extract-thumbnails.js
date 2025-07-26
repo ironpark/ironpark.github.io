@@ -7,7 +7,6 @@ import { fileURLToPath } from 'url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = join(__dirname, '..');
 const BLOG_DIR = join(ROOT_DIR, 'src/content/blog');
-const TRANSLATE_DIR = join(BLOG_DIR, 'translate');
 
 /**
  * Extract the first image URL from markdown content
@@ -143,14 +142,8 @@ function processDirectory(dirPath, pattern = /\.md$/) {
 function main() {
   console.log('🔍 Extracting thumbnails from markdown files...\n');
   
-  // Process Korean blog posts
-  processDirectory(BLOG_DIR, /^[^.]*\.md$/); // Only .md files, not .en.md or .ja.md
-  
-  // Process English translations
-  processDirectory(TRANSLATE_DIR, /\.en\.md$/);
-  
-  // Process Japanese translations  
-  processDirectory(TRANSLATE_DIR, /\.ja\.md$/);
+  // Process all blog posts with new naming convention
+  processDirectory(BLOG_DIR, /\.(ko|en|ja)\.md$/);
   
   console.log('\n✨ Thumbnail extraction completed!');
 }

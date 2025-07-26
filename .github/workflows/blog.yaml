@@ -27,7 +27,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/checkout@v4
         with:
-          path: ./posts
+          path: ./sync
           ref: auto-sync
       - uses: actions/configure-pages@v5
         id: pages
@@ -40,6 +40,10 @@ jobs:
         with:
           node-version: 20
           cache: 'pnpm'
+      - name: Copy posts
+        run: |
+          cp -r ./sync/output/posts/*.md ./src/content/blog
+          cp -r ./sync/output/static/* ./static/posts
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Build

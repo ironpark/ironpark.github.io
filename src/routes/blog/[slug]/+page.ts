@@ -1,4 +1,3 @@
-import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 import { getLocale } from '$lib/paraglide/runtime.js';
 
@@ -24,13 +23,7 @@ interface PostMetadata {
 }
 
 const getPostByLocale = async (locale: string, slug: string) => {
-  if (locale === 'ko') {
-    return await import(`../../../content/blog/${slug}.md`);
-  } else if (locale === 'ja') {
-    return await import(`../../../content/blog/translate/${slug}.ja.md`);
-  } else {
-    return await import(`../../../content/blog/translate/${slug}.en.md`);
-  }
+  return await import(`../../../content/blog/${slug}.${locale}.md`);
 }
 
 

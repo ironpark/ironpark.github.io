@@ -3,15 +3,17 @@ import type { RequestHandler } from './$types';
 import * as m from '$lib/paraglide/messages';
 export const prerender = true;
 
-const getPosts = async (locale:string) => {
-  if (locale === 'ko') {
-    return await import.meta.glob('/src/content/blog/*.md')
-  } else if (locale === 'en') {
-    return await import.meta.glob('/src/content/blog/translate/*.en.md')
-  } else if (locale === 'ja') {
-    return await import.meta.glob('/src/content/blog/translate/*.ja.md')
-  }
-  return {}
+const getPosts = (locale:string) => {
+  const allPosts = import.meta.glob('/src/content/blog/*.{ko,en,ja}.md');
+  const filteredPosts: any = {};
+  
+  Object.entries(allPosts).forEach(([path, module]) => {
+    if (path.includes(`.${locale}.md`)) {
+      filteredPosts[path] = module;
+    }
+  });
+  
+  return filteredPosts;
 }
 export const GET: RequestHandler = async () => {
   const locale = getLocale();
@@ -30,14 +32,12 @@ export const GET: RequestHandler = async () => {
   } else if (locale === 'ja') {
     baseUrl = 'https://ironpark.github.io/ja'
   }
-  const files = await getPosts(locale)
+  const files = getPosts(locale)
   const posts = await Promise.all(
     Object.entries(files).map(async ([path, resolver]) => {
       const { metadata } = await resolver() as { metadata: any };
-      let slug = path.split('/').pop()?.replace('.md', '');
-      if (locale != 'ko'){
-        slug = slug?.replace('.en','').replace('.ja','')
-      }
+      const filename = path.split('/').pop() || '';
+      const slug = filename.replace(/\.(ko|en|ja)\.md$/, '');
       return {
         ...metadata,
         slug

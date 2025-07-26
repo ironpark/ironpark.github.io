@@ -9,34 +9,18 @@
     localizeHref,
   } from "$lib/paraglide/runtime";
 
-  // 로케일에 따라 블로그 포스트를 다르게 import
+  // 로케일에 따라 블로그 포스트를 import
   const locale = getLocale();
-
-  let blogPosts: any[] = [];
-
-  if (locale === "en") {
-    blogPosts = Object.entries(
-      import.meta.glob("/src/content/blog/translate/*.en.md", { eager: true })
-    ).map(([path, module]: [string, any]) => ({
-      slug: path.split("/").pop()?.replace(".en.md", "") || "",
+  const pattern = `/src/content/blog/*.${locale}.md`;
+  
+  const blogPosts: any[] = Object.entries(
+    import.meta.glob("/src/content/blog/*.{ko,en,ja}.md", { eager: true })
+  )
+    .filter(([path]) => path.includes(`.${locale}.md`))
+    .map(([path, module]: [string, any]) => ({
+      slug: path.split("/").pop()?.replace(/\.(ko|en|ja)\.md$/, "") || "",
       ...module.metadata,
     }));
-  } else if (locale === "ja") {
-    blogPosts = Object.entries(
-      import.meta.glob("/src/content/blog/translate/*.ja.md", { eager: true })
-    ).map(([path, module]: [string, any]) => ({
-      slug: path.split("/").pop()?.replace(".ja.md", "") || "",
-      ...module.metadata,
-    }));
-  } else {
-    // 기본(한국어)
-    blogPosts = Object.entries(
-      import.meta.glob("/src/content/blog/*.md", { eager: true })
-    ).map(([path, module]: [string, any]) => ({
-      slug: path.split("/").pop()?.replace(".md", "") || "",
-      ...module.metadata,
-    }));
-  }
 
   interface Command {
     id: string;

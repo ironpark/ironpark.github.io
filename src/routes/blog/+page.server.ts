@@ -1,6 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { extractLocaleFromRequest,extractLocaleFromUrl,getLocale } from '$lib/paraglide/runtime.js';
-import { glob } from 'node:fs';
+import { getLocale } from '$lib/paraglide/runtime.js';
 
 export const prerender = true;
 
@@ -22,20 +21,23 @@ interface PostMetadata {
   };
   [key: string]: any;
 }
-const getPostsByLocale = async (locale: string) => {
-  if (locale === 'ko') {
-    return await import.meta.glob('/src/content/blog/*.md');
-  } else if (locale === 'ja') {
-    return await import.meta.glob('/src/content/blog/translate/*.ja.md');
-  } else {
-    return await import.meta.glob('/src/content/blog/translate/*.en.md');
-  }
+const getPostsByLocale = (locale: string) => {
+  const allPosts = import.meta.glob('/src/content/blog/*.{ko,en,ja}.md');
+  const filteredPosts: any = {};
+  
+  Object.entries(allPosts).forEach(([path, module]) => {
+    if (path.includes(`.${locale}.md`)) {
+      filteredPosts[path] = module;
+    }
+  });
+  
+  return filteredPosts;
 }
 
-export const load: PageServerLoad = async ({ request }) => {
+export const load: PageServerLoad = async () => {
   // Get current locale from request
   const locale = getLocale();
-  const files = await getPostsByLocale(locale);
+  const files = getPostsByLocale(locale);
   // Import blog posts for the current language only
   const posts = (await Promise.all(
     Object.entries(files)
@@ -44,15 +46,8 @@ export const load: PageServerLoad = async ({ request }) => {
         
         // Extract slug from filename
         const filename = path.split('/').pop() || '';
-        let slug: string;
-        
-        if (path.includes('/translate/')) {
-          // Remove language suffix for translated files
-          slug = filename.replace(/\.(en|ja)\.md$/, '');
-        } else {
-          // Korean file
-          slug = filename.replace('.md', '');
-        }
+        // Remove language suffix for all files
+        const slug = filename.replace(/\.(ko|en|ja)\.md$/, '');
         
         return {
           ...metadata,

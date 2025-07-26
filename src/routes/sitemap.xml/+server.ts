@@ -54,20 +54,14 @@ export const GET: RequestHandler = async () => {
 	];
 	
 	// Get all blog posts
-	const blogFiles = import.meta.glob([
-		'/src/content/blog/*.md',
-		'/src/content/blog/translate/*.en.md',
-		'/src/content/blog/translate/*.ja.md'
-	]);
+	const blogFiles = import.meta.glob('/src/content/blog/*.{ko,en,ja}.md');
 	
 	// Extract blog posts with modification dates
 	const blogPosts = new Map<string, BlogPost>();
 	
 	for (const [filePath] of Object.entries(blogFiles)) {
 		const filename = filePath.split('/').pop() || '';
-		const slug = filename
-			.replace(/\.(en|ja)\.md$/, '')
-			.replace('.md', '');
+		const slug = filename.replace(/\.(ko|en|ja)\.md$/, '');
 		
 		// Convert the import.meta.glob path to actual file system path
 		const actualPath = path.join(process.cwd(), filePath.substring(1)); // Remove leading '/'
