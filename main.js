@@ -1,10 +1,7 @@
 import fs from 'fs'
 import path from 'path'
-import parseMD from 'parse-md'
-import yaml from 'js-yaml'
-import crypto from 'crypto'
-import { mkdirAnyway, rmAnyway, readMD, copyAnyway, writeMD, getPosts } from './utils.js'
-import { translate } from './lib/trans.js'
+import { mkdirAnyway, rmAnyway, readMD, copyAnyway, writeMD, getPosts } from './lib/utils.js'
+import { translate, translateMetadata } from './lib/trans.js'
 
 // Configs
 const outputDir = 'output'
