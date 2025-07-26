@@ -39,7 +39,7 @@ const rebuild = (post, outputPath)=>{
 
 for(const post of posts){
     console.log(post.filename)
-    rebuild(post,  path.join(outputDir, "posts", `${post.metadata.slug}.md`))
+    rebuild(post,  path.join(outputDir, "posts", `${post.metadata.slug}.ko.md`))
 }
 
 // auto translate
