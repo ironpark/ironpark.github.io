@@ -9,6 +9,7 @@ const REPO_NAMES = [
   // 예시 - 실제 리포지토리로 변경하세요
   'ironpark/ivent',
   'ironpark/zapp',
+  'ironpark/ironpark.github.io',
   // 'ironpark/your-repo-name',
   // 더 많은 리포지토리 추가...
 ];
