@@ -3,52 +3,28 @@ import path from 'path'
 import parseMD from 'parse-md'
 import yaml from 'js-yaml'
 import crypto from 'crypto'
+import { mkdirAnyway, rmAnyway, readMD, copyAnyway, writeMD, getPosts } from './utils.js'
+import { translate } from './lib/trans.js'
 
 // Configs
-const originalLang = 'ko'
 const outputDir = 'output'
 const postsDir = 'posts'
 const cacheDir = ".cache"
 
-const mkDirIfNotExists = (dir)=>{
-    // if dir is array, create all dirs
-    if(Array.isArray(dir)) {
-        for(const d of dir) mkDirIfNotExists(d)
-    } else {
-        if(!fs.existsSync(dir)) fs.mkdirSync(dir, {recursive: true})
-    }
-}
 // Basic Setup
-if(fs.existsSync(outputDir)){
-    fs.rmSync(outputDir, {recursive: true})
-}
-mkDirIfNotExists([outputDir, 
-    path.join(outputDir, "src", "content","posts"),
+rmAnyway(outputDir)
+mkdirAnyway([outputDir, 
+    path.join(outputDir, "posts"),
     path.join(outputDir, "static", "posts"),
     cacheDir,
 ])
 
-const files = fs.readdirSync(postsDir)
-const mdFiles = files.filter(file => file.endsWith('.md'))
-const posts = mdFiles.map(file=>{
-    const fileContents = fs.readFileSync(path.join(postsDir, file), 'utf8')
-    const { metadata, content } = parseMD(fileContents)
-    const metadataHash = crypto.createHash('sha256').update(JSON.stringify(metadata)).digest('hex')
-    const contentHash = crypto.createHash('sha256').update(content.trim()).digest('hex')
-    // create cache file if not exists
-    return {
-        filename: file,
-        metadataHash,
-        contentHash,
-        metadata,
-        content
-    }
-}).filter(post=>post.metadata.published === true)
+const posts = getPosts(postsDir)
 
-const replaceImageLinks = (metadata,content)=>{
+const replaceImageLinks = (metadata, content)=>{
     // [[anyimagename.{png,jpg,jpeg,gif,svg}]] -> ![anyimagename.{png,jpg,jpeg,gif,svg}](/anyimagename.{png,jpg,jpeg,gif,svg})
-    return content.replace(/\[\[.*?\.(png|jpg|jpeg|gif|svg)\]\]/g, (match, p1)=>{   
-        const imageName = match.replace('[[', '').replace(']]', '')
+    return content.replace(/\!\[\[.*?\.(png|jpg|jpeg|gif|svg)\]\]/g, (match, p1)=>{   
+        const imageName = match.replace('![[', '').replace(']]', '')
         return `![](/posts/${imageName})`
     })
 }
@@ -56,25 +32,47 @@ const replaceImageLinks = (metadata,content)=>{
 const rebuild = (post, outputPath)=>{
     const { metadata, content } = post
     const replacedContent = replaceImageLinks(metadata, content)
-    const outputContent = "---\n" + yaml.dump(metadata) + "---\n" + replacedContent
-    fs.writeFileSync(outputPath, outputContent)
-    // copy image files to output/src/static/posts/{post.metadata.slug}
+    writeMD({metadata, content: replacedContent}, outputPath)
     const imageFiles = fs.readdirSync("assets")
     const imageDir = path.join(outputDir, "static", "posts", post.metadata.slug)
-    mkDirIfNotExists(imageDir)
     for(const imageFile of imageFiles){
-        fs.copyFileSync(path.join("assets", imageFile), path.join(imageDir, imageFile))
+        copyAnyway(path.join("assets", imageFile), path.join(imageDir, imageFile))
     }
 }
 
-const rebuildAll = ()=>{
-    for(const post of posts){
-        console.log(post.filename)
-        rebuild(post,  path.join(outputDir, "src", "content","posts", `${post.metadata.slug}.md`))
-    }
+for(const post of posts){
+    console.log(post.filename)
+    rebuild(post,  path.join(outputDir, "posts", `${post.metadata.slug}.md`))
 }
 
-rebuildAll()
+// auto translate
+const generatedPosts = getPosts("output/posts", false)
+const translatePost = async (post, lang, model="openai/gpt-4.1-mini")=>{
+    // check if cache file exists
+    const cacheFile = path.join(cacheDir, `${post.metadata.slug}.${lang}.md`)
+    if(fs.existsSync(cacheFile)){
+        // get metadata from cache file
+        const {metadata} = readMD(cacheFile)
+        if(metadata.ogHash === post.contentHash){
+            console.log(`Cache hit for ${post.filename} ${lang} skipping...`)
+            // copy cache file to output/posts
+            copyAnyway(cacheFile, path.join(outputDir, "posts", `${post.metadata.slug}.${lang}.md`))
+            return
+        }
+    }
+    
+    const translated = await translate({ data: post, lang, model })
+    const translatedMetadata = await translateMetadata({ metadata: post.metadata, fromLang: "ko", toLang: lang, model })
+    translated.metadata = translatedMetadata
+    translated.metadata.ogHash = post.contentHash
+    writeMD(translated, path.join(outputDir, "posts", `${post.metadata.slug}.${lang}.md`))
+    copyAnyway(path.join(outputDir, "posts", `${post.metadata.slug}.${lang}.md`), path.join(cacheDir, `${post.metadata.slug}.${lang}.md`))
+}
+
+for(const post of generatedPosts){
+    await translatePost(post, "en")
+    await translatePost(post, "ja")
+}
 
 // create cache file
 for(const post of posts){
