@@ -31,7 +31,7 @@ const rebuild = (post, outputPath)=>{
     const replacedContent = replaceImageLinks(metadata, content)
     writeMD({metadata, content: replacedContent}, outputPath)
     const imageFiles = fs.readdirSync("assets")
-    const imageDir = path.join(outputDir, "static", "posts", post.metadata.slug)
+    const imageDir = path.join(outputDir, "static", "posts")
     for(const imageFile of imageFiles){
         copyAnyway(path.join("assets", imageFile), path.join(imageDir, imageFile))
     }
