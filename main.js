@@ -45,6 +45,7 @@ for(const post of posts){
 // auto translate
 const generatedPosts = getPosts("output/posts", false)
 const translatePost = async (post, lang, model="openai/gpt-4.1-mini")=>{
+    
     // check if cache file exists
     const cacheFile = path.join(cacheDir, `${post.metadata.slug}.${lang}.md`)
     if(fs.existsSync(cacheFile)){
@@ -57,9 +58,9 @@ const translatePost = async (post, lang, model="openai/gpt-4.1-mini")=>{
             return
         }
     }
-    
+    console.log("translating", post.filename, lang)
     const translated = await translate({ data: post, lang, model })
-    const translatedMetadata = await translateMetadata({ metadata: post.metadata, fromLang: "ko", toLang: lang, model })
+    const translatedMetadata = await translateMetadata({ metadata: post.metadata, fromLang: "ko", toLang: lang, model: "openai/gpt-4.1-nano" })
     translated.metadata = translatedMetadata
     translated.metadata.ogHash = post.contentHash
     writeMD(translated, path.join(outputDir, "posts", `${post.metadata.slug}.${lang}.md`))
@@ -67,6 +68,7 @@ const translatePost = async (post, lang, model="openai/gpt-4.1-mini")=>{
 }
 
 for(const post of generatedPosts){
+    console.log(`Translating ${post.filename}...`)
     await translatePost(post, "en")
     await translatePost(post, "ja")
 }

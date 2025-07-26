@@ -5,7 +5,7 @@
   "main": "main.js",
   "type": "module",
   "scripts": {
-    "build": "node main.js"
+    "build": "node --trace-uncaught main.js"
   },
   "keywords": [],
   "author": "",
