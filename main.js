@@ -49,7 +49,7 @@ const replaceImageLinks = (metadata,content)=>{
     // [[anyimagename.{png,jpg,jpeg,gif,svg}]] -> ![anyimagename.{png,jpg,jpeg,gif,svg}](/anyimagename.{png,jpg,jpeg,gif,svg})
     return content.replace(/\[\[.*?\.(png|jpg|jpeg|gif|svg)\]\]/g, (match, p1)=>{   
         const imageName = match.replace('[[', '').replace(']]', '')
-        return `![](/posts/${metadata.slug}/${imageName})`
+        return `![](/posts/${imageName})`
     })
 }
 
