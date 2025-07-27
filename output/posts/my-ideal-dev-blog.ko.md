@@ -6,9 +6,8 @@ slug: my-ideal-dev-blog
 title: 나만의 블로그를 만들다
 subTitle: 이상적인 블로그의 조건은 무엇인가
 description: >-
-  여러 번의 시행착오 끝에 찾은 나만의 이상적인 블로그 만들기. GitHub Pages와 SvelteKit 조합으로 비용 최소화, 데이터
-  소유권 확보, 자유로운 커스터마이징, 그리고 Obsidian과 마크다운을 활용한 편리한 글쓰기 환경까지. 플랫폼에 의존하지 않고 진정한 내
-  공간을 만드는 과정과 그 과정에서 깨달은 이상적인 도구와 이상적인 블로그의 차이에 대한 성찰.
+  플랫폼 종속성을 벗어나 진짜 '내 것'인 공간을 만드는 여정. GitHub Pages와 SvelteKit으로 무료 호스팅과 완전한
+  커스터마이징을 동시에 잡고, Obsidian으로 언제 어디서든 자유롭게 글쓰기까지.
 series: 똑똑한 블로그 만들기
 categories:
   - Thoughts
