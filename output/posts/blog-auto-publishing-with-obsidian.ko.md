@@ -164,7 +164,7 @@ jobs:
           # Create directories and copy files
           mkdir -p /contents/{posts,assets}
           cp -r /brain/2.Areas/Blog/*.md /contents/posts/ 2>/dev/null || echo "No markdown files found"
-          cp -r /brain/Z.Assets /contents/assets 2>/dev/null || echo "No image assets found"
+          cp -r /brain/Z.Assets/* /contents/assets/* 2>/dev/null || echo "No image assets found"
       
       - name: Build Contents
         working-directory: contents
