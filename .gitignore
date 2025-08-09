@@ -11,7 +11,8 @@ node_modules
 /output
 /posts
 /.cache
-
+/static/posts
+/src/content/blog
 # OS
 .DS_Store
 Thumbs.db

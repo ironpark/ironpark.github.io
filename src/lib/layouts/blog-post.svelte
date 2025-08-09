@@ -1,10 +1,12 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
   import * as m from "$lib/paraglide/messages";
-
   import type { Snippet } from "svelte";
   import { getLocale } from "$lib/paraglide/runtime";
+  import Giscus from "@giscus/svelte";
+  import { mode } from "mode-watcher";
   interface Props {
+    slug: string;
     title: string;
     subTitle: string;
     created: string;
@@ -19,6 +21,7 @@
   }
   const locale = getLocale();
   let {
+    slug,
     title,
     created,
     updated,
@@ -90,7 +93,23 @@
   >
     {@render children?.()}
   </div>
+  <div class="my-15 border-b border-dashed dark:border-white/50 border-black/50"></div>
 
+  <Giscus
+    id="comments"
+    repo="ironpark/ironpark.github.io"
+    repoId="MDEwOlJlcG9zaXRvcnkzNDgxMjA1Mg=="
+    category="Posts"
+    categoryId="DIC_kwDOAhMwlM4CtLG7"
+    mapping="specific"
+    reactionsEnabled="1"
+    emitMetadata="0"
+    inputPosition="top"
+    theme={mode.current === "dark" ? "noborder_dark" : "noborder_light"}
+    lang={locale === "ko" ? "ko" : locale === "ja" ? "ja" : "en"}
+    loading="lazy"
+    term={slug}
+  /> 
   <footer class="mt-16 pt-8 border-t">
     <div class="flex items-center justify-between">
       <a
@@ -145,3 +164,4 @@
     </div>
   </footer>
 </article>
+

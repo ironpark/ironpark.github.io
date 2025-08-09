@@ -42,10 +42,8 @@ jobs:
           cache: 'pnpm'
       - name: Copy posts
         run: |
-          rm -rf ./src/content/blog
-          mkdir -p ./src/content/blog
-          rm -rf ./static/posts
-          mkdir -p ./static/posts
+          rm -rf ./src/content/blog ; mkdir -p ./src/content/blog
+          rm -rf ./static/posts ; mkdir -p ./static/posts
           cp -r ./sync/output/posts/*.md ./src/content/blog
           cp -r ./sync/output/static/posts/* ./static/posts
       - name: Install dependencies
@@ -56,7 +54,6 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./build
-
   deploy:
     runs-on: ubuntu-latest
     needs: build
