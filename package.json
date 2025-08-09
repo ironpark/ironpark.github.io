@@ -2,10 +2,13 @@
   "name": "ironpark.github.io",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "dist/main.js",
   "type": "module",
   "scripts": {
-    "build": "node --trace-uncaught main.js"
+    "postinstall": "pnpx puppeteer browsers install",
+    "build": "tsc && node --trace-uncaught dist/main.js",
+    "compile": "tsc",
+    "watch": "tsc --watch"
   },
   "keywords": [],
   "author": "",
@@ -15,8 +18,16 @@
     "@azure-rest/ai-inference": "1.0.0-beta.6",
     "@azure/core-auth": "^1.10.0",
     "@azure/core-sse": "^2.3.0",
+    "@mermaid-js/mermaid-cli": "^11.9.0",
     "js-yaml": "^4.1.0",
+    "marked": "^16.1.2",
     "openai": "^5.10.2",
     "parse-md": "^3.0.3"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^24.2.0",
+    "puppeteer": "^24.16.0",
+    "typescript": "^5.9.2"
   }
 }

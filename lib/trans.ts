@@ -1,36 +1,54 @@
 import ModelClient, { isUnexpected } from "@azure-rest/ai-inference";
 import { AzureKeyCredential } from "@azure/core-auth";
-
 const token = process.env["GITHUB_TOKEN"];
 const endpoint = "https://models.github.ai/inference";
 
-export const translate = async ({data, lang, model="openai/gpt-4.1"}) => {
-    const { metadata, content : originalMarkdown } = data
-    const fromLang = metadata.lang
-    const toLang = lang
-    
-    const langNames = {
-        ko: "Korean",
-        en: "English", 
-        ja: "Japanese"
-    }
-    
-    const prompt = `Please translate the following markdown content from ${langNames[fromLang]} to ${langNames[toLang]}.
+
+const langNames:{[key:string]:string} = {
+  ko: "Korean",
+  en: "English", 
+  ja: "Japanese"
+}
+
+export interface TranslateOptions {
+  markdownContent: string;
+  fromLang: string;
+  toLang: string;
+  model?: string;
+}
+
+export interface TranslateMetadataOptions {
+  metadata: {[key:string]:any};
+  fromLang: string;
+  toLang: string;
+  model?: string;
+}
+
+export const translate = async ({markdownContent, fromLang, toLang, model = "openai/gpt-4.1"}: TranslateOptions): Promise<string> => {
+    const fromLangName = langNames[fromLang] || fromLang
+    const toLangName = langNames[toLang] || toLang
+    const prompt = `Please translate the following markdown content from ${fromLangName} to ${toLangName}.
 
 IMPORTANT TRANSLATION GUIDELINES:
 1. Understand the original context, tone, nuance, and writing style
 2. Translate naturally and idiomatically in the target language while preserving the author's voice
 3. Maintain consistency in terminology and style throughout the entire text
 4. Preserve all markdown formatting, links, and image references exactly as they are
-5. Only translate the text content, not markdown syntax, code blocks, or image filenames
-6. Keep the same document structure and formatting
-7. Ensure the translation reads naturally to native speakers of the target language
-8. Maintain the same level of formality/informality as the original
+5. Only translate the text content, not markdown syntax, or image filenames
+6. For code blocks, only translate the comments, not the code
+7. Specifically, mermaid code blocks, only translate the diagram text, not the diagram itself
+8. Keep the same document structure and formatting
+9. Ensure the translation reads naturally to native speakers of the target language
+10. Maintain the same level of formality/informality as the original
 
 <original_markdown>
-${originalMarkdown}
+${markdownContent}
 </original_markdown>
 `
+
+    if (!token) {
+        throw new Error("GITHUB_TOKEN is not set");
+    }
 
     const client = ModelClient(
       endpoint,
@@ -50,24 +68,15 @@ ${originalMarkdown}
   
     if (isUnexpected(response)) {
       console.log(response)
-      throw response.body.error;
+      throw response.body?.error || new Error("Unexpected response");
     }
   
-    return {
-        metadata: {
-            ...metadata,
-            lang: toLang
-        },
-        content: response.body.choices[0].message.content
-    }
+    return response.body.choices[0].message.content || ""
 }
 
-export const translateMetadata = async ({metadata, fromLang, toLang, model="openai/gpt-4.1"}) => {
-    const langNames = {
-        ko: "Korean",
-        en: "English", 
-        ja: "Japanese"
-    }
+export const translateMetadata = async ({metadata, fromLang, toLang, model = "openai/gpt-4.1"}: TranslateMetadataOptions): Promise<{[key:string]:any}> => {
+    const fromLangName = langNames[fromLang] || fromLang
+    const toLangName = langNames[toLang] || toLang
     
     const fieldsToTranslate = {
         title: metadata.title,
@@ -75,10 +84,14 @@ export const translateMetadata = async ({metadata, fromLang, toLang, model="open
         description: metadata.description
     }
     
-    const prompt = `Translate these metadata fields from ${langNames[fromLang]} to ${langNames[toLang]}.
+    const prompt = `Translate these metadata fields from ${fromLangName} to ${toLangName}.
 Keep the original tone and style. Return in the same JSON format:
 
 ${JSON.stringify(fieldsToTranslate, null, 2)}`
+
+    if (!token) {
+        throw new Error("GITHUB_TOKEN is not set");
+    }
 
     const client = ModelClient(
       endpoint,
@@ -97,10 +110,10 @@ ${JSON.stringify(fieldsToTranslate, null, 2)}`
     });
   
     if (isUnexpected(response)) {
-      throw response.body.error;
+      throw response.body?.error || new Error("Unexpected response");
     }
   
-    const translatedFields = JSON.parse(response.body.choices[0].message.content)
+    const translatedFields = JSON.parse(response.body.choices[0].message.content || "{}")
     
     return {
         ...metadata,

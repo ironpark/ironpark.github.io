@@ -6,9 +6,8 @@ slug: my-ideal-dev-blog
 title: 나만의 블로그를 만들다
 subTitle: 이상적인 블로그의 조건은 무엇인가
 description: >-
-  여러 번의 시행착오 끝에 찾은 나만의 이상적인 블로그 만들기. GitHub Pages와 SvelteKit 조합으로 비용 최소화, 데이터
-  소유권 확보, 자유로운 커스터마이징, 그리고 Obsidian과 마크다운을 활용한 편리한 글쓰기 환경까지. 플랫폼에 의존하지 않고 진정한 내
-  공간을 만드는 과정과 그 과정에서 깨달은 이상적인 도구와 이상적인 블로그의 차이에 대한 성찰.
+  플랫폼 종속성을 벗어나 진짜 '내 것'인 공간을 만드는 여정. GitHub Pages와 SvelteKit으로 무료 호스팅과 완전한
+  커스터마이징을 동시에 잡고, Obsidian으로 언제 어디서든 자유롭게 글쓰기까지.
 series: 똑똑한 블로그 만들기
 categories:
   - Thoughts
@@ -18,9 +17,9 @@ tags:
   - svelte-kit
 lang: ko
 thumbnail: https://ironpark.github.io/posts/my-ideal-dev-blog/title.png
+originalLang: ko
 ---
-![](/posts/title.png)
-## 나의 공간을 꿈꾸며
+![title](/posts/my-ideal-dev-blog/title.png)## 나의 공간을 꿈꾸며
 
 막연히 "내 블로그 하나쯤 있으면 좋겠다."라는 생각을 자주 했다. 내가 뭘 했는지 기록하고, 공유하고 교류하며 이 넓은 인터넷 한쪽에 내 소유의 작은 공방을 차리는 상상. 그러다 보면 나도 조금씩 성장할 수 있지 않을까 하는 기대 같은 것도 있었다.
 
@@ -44,7 +43,7 @@ thumbnail: https://ironpark.github.io/posts/my-ideal-dev-blog/title.png
 글쓰기는 언제나 어렵다. 하지만 최소한 **쉽게 시작할 수는 있어야 한다**. 언제 어디서든, 떠오를 때 바로 쓰고 지울 수 있어야 하고, 스마트폰이든 태블릿이든 데스크탑이든 **환경에 구애받지 않고, 작업이 가능해야** 한다.
 
 ## 궁극의 솔루션
-![](/posts/silver-bullet.png)
+![silver-bullet](/posts/my-ideal-dev-blog/silver-bullet.png)
 
 이런 조건을 다 만족하는 방법은 많지 않다. 내가 고른 건 GitHub Pages + SvelteKit 조합이다.
 
@@ -78,7 +77,7 @@ SvelteKit에 대한 깊은 소개는 이 글의 목적과 맞지 않으니 다�
 혹시 아직 [Svelte](https://svelte.dev/) / [Svelte Kit](https://svelte.dev/docs/kit/introduction) 을 안써봤다면 한번쯤 먹어봐라 맛있다.
 
 ### 마크다운 + 자동화
-![](/posts/markdown-action.png)
+![markdown-action](/posts/my-ideal-dev-blog/markdown-action.png)
 
 이 블로그는 **마크다운 형식**으로 글을 작성하고 있다. 그리고 우리에겐 [Obsidian](https://obsidian.md/)이라는 훌륭한 마크다운 기반 메모 앱이 있다 (심지어 무료다). 다양한 플랫폼 지원은 물론이고, 플러그인 생태계도 잘 갖춰져 있다. 무엇보다 마음에 드는 건, **모든 데이터가 로컬에 저장된다는 점**이다.
 
