@@ -1,7 +1,7 @@
 ---
 created: 2025-07-28T14:30:00.000Z
 updated: 2025-08-08T14:50:00.000Z
-published: false
+published: true
 slug: blog-auto-publishing-with-obsidian
 title: 블로그 자동발행 (feat. Obsidian)
 subTitle: 누구나 그럴싸한 계획은 있다
@@ -247,7 +247,147 @@ jobs:
         id: deployment
 ```
 
-### 파고들기
+### 자세히 살펴보기
+
+아무리 개발자는 코드로 말한다지만, 코드만 던져놓고 사라지는 건 정이 없다. 혹시 따라 해볼 누군가를 위해, 두 개의 GitHub Actions 워크플로우가 어떻게 유기적으로 동작하는지 하나씩 해부해보겠다. 겉보기엔 복잡해 보여도, 각자의 역할은 뚜렷하게 나뉘어 있으니 차근차근 따라가면 이해할 수 있으리라 믿는다.
+
+#### Vault 저장소 워크플로우 분석
+
+먼저 Obsidian Vault 저장소의 `Contents Sync` 워크플로우부터 살펴보자.
+
+**트리거 조건 설정**
+```yaml
+on:
+  workflow_dispatch:            # 수동 실행 가능
+  push:
+    paths:
+      - "2.Areas/Blog/*.md"     # 블로그 포스트 변경 시에만
+      - ".github/workflows/**"  # 워크플로우 파일 변경 시
+    branches:
+      - main
+```
+
+`paths` 필터를 이용해 **블로그 관련 파일이 변경될 때만** 실행되도록 했다.  이렇게 하면 불필요한 빌드를 막아 GitHub Actions 무료 티어(월 2,000분)를 절약할 수 있다.  물론 `.gitignore`를 적절히 설정해, 필요 없는 파일이 아예 커밋되지 않게 하는 것도 필수다.
+
+**두 저장소 동시 체크아웃**
+```yaml
+- name: Checkout brain repository
+  uses: actions/checkout@v4
+  with:
+    path: brain     # 현재 저장소 (vault) 를 brain 폴더에 체크아웃
+    
+- name: Checkout contents repository
+  uses: actions/checkout@v4
+  with:
+    repository: ironpark/ironpark.github.io # 블로그의 깃허브 저장소에서
+    ref: auto-sync  # auto-sync 브랜치를
+    path: contents  # contents 폴더에 체크아웃
+    token: ${{ secrets.GH_TOKEN }}  # 외부 저장소 접근용 토큰
+```
+
+한 워크플로우 안에서 **두 개의 저장소를 다른 경로에 체크아웃**한다.  이렇게 하면 단순한 `cp` 명령어로 파일을 옮길 수 있어, 복잡한 스크립트 없이도 쉽게 동기화가 가능하다.  이때 토큰을 세팅하는 이유는 이후 커밋과 푸시 작업을 위해서다.
+
+**포스트 전처리 과정**
+```yaml
+- name: Sync Contents  # 기존 파일 제거, 디렉토리 생성, 포스트 마크다운 파일 & 이미지 복사
+  run: |
+    rm -rf contents/{posts,assets,output}
+    mkdir -p contents/{posts,assets}
+    cp -r brain/2.Areas/Blog/*.md contents/posts/
+    cp -r brain/Z.Assets/* contents/assets/
+
+- name: Build Contents # 전처리 실행 (Obsidian 문법 변환, 번역 등)
+  working-directory: contents
+  run: |
+    pnpm build
+```
+
+먼저 Vault에서 **마크다운 파일과 이미지**를 블로그 저장소(`auto-sync` 브랜치)에 복사한다.  
+그다음 `pnpm build`로 전처리기를 실행한다. 
+
+이 전처리기는 아래 작업들을 실행하고 그 결과를 output 폴더에 저장한다
+- Obsidian의 `![[image.png]]` 문법을 표준 마크다운으로 변환
+- AI 번역 처리 (다국어 지원)
+- 기타 전처리 작업들..
+
+이 전처리기도 이 블로그를 구축하는데 핵심 역할을 하고 있지만 여기서 다루기에는 너무 크다.
+
+**변경사항 확인과 조건부 푸시**
+```yaml
+- name: Check for changes
+  id: check_changes
+  run: |
+    git add .
+    if git diff --staged --quiet; then
+      echo "changes=false" >> $GITHUB_OUTPUT
+    else
+      echo "changes=true" >> $GITHUB_OUTPUT
+    fi
+
+- name: Push Contents
+  if: steps.check_changes.outputs.changes == 'true'  # 변경사항이 있을 때만
+```
+
+전처리기를 실행한 이후 실제로 변경된 내용이 있을 때만 커밋한다. 이부분은 단순히 저장만 했을 뿐 내용이 바뀌지 않았다면 불필요한 커밋 시도와 이후 배포시도를 방지하기 위해 존재한다.
+
+**블로그 빌드 트리거**
+```yaml
+- name: Run Publish
+  run: gh api /repos/ironpark/ironpark.github.io/dispatches -f event_type='post-sync'
+```
+
+GitHub CLI를 사용해 블로그 저장소에 `repository_dispatch` 이벤트를 발생시킨다. 이게 두 워크플로우를 연결하는 핵심 고리다. 여기서 `event_type`은 ‘어떤 이유로 트리거됐는지’를 구분하기 위한 라벨 같은 역할을 한다.
+#### 블로그 저장소 워크플로우 분석
+
+이제 블로그 저장소의 `Build and Deploy to Pages` 워크플로우를 보자.
+
+**다양한 트리거 지원**
+```yaml
+on:
+  push:
+    branches: ["master"]  # 코드 수정 시
+  workflow_dispatch:      # 수동 실행
+  repository_dispatch:    
+    types: [ post-sync ]  # Vault에서 보낸 이벤트
+```
+
+세 가지 트리거가 선언되어 있는데 그중 `repository_dispatch`가 Vault 저장소와 연결되는 중요한 고리다.  Vault 워크 플로우에서 블로그 배포 워크플로우를 실행하기 위해 필요하다.
+
+**두 브랜치 병합**
+```yaml
+- uses: actions/checkout@v4  # master 브랜치 체크아웃
+- uses: actions/checkout@v4
+  with:
+    path: ./sync
+    ref: auto-sync  # auto-sync 브랜치를 sync 폴더에
+    
+- name: Copy posts
+  run: |
+    rm -rf ./src/content/blog ; mkdir -p ./src/content/blog
+    rm -rf ./static/posts ; mkdir -p ./static/posts
+    cp -r ./sync/output/posts/*.md ./src/content/blog  # 전처리된 포스트 복사
+    cp -r ./sync/output/static/posts/* ./static/posts  # 이미지 등 정적 파일
+```
+
+`master` 브랜치의 코드와 `auto-sync` 브랜치의 콘텐츠를 합쳐서 빌드한다. 이 방식으로 코드와 콘텐츠의 완벽한 분리를 달성했다.
+#### 보안 고려사항
+
+두 워크플로우 모두 `${{ secrets.GH_TOKEN }}`을 사용한다. 이 토큰은:
+- Blog 리포에만 읽기,쓰기 권한 부여
+- 최소한의 권한만 가진 Fine-grained PAT 사용
+
+이렇게 하면 정말 만에하나 토큰이 노출되더라도 피해를 최소화할 수 있다.
+
+#### 왜 이렇게 복잡하게?
+
+단순히 "글 하나 발행하는데 뭘 이렇게 복잡하게 만들었나" 싶을 수도 있다.  하지만 이로인해 ...
+
+1. **완벽한 관심사 분리**: 글쓰기와 코딩이 서로 방해하지 않는다
+2. **충돌 없는 협업**: 자동화와 수동 작업이 평화롭게 공존한다
+3. **확장 가능성**: 전처리기, 번역, 크로스포스팅 등 기능 추가가 쉽다
+4. **보안**: 개인 Vault와 블로그 컨텐츠간의 분리
+
+결국 복잡해 보이는 이 시스템도 **글쓰기에만 집중하고 싶다** 는 단순한 욕구에서 시작됐다. 때로는 단순한 목표를 달성하기 위해 복잡한 여정을 거쳐야 할 때도 있는 법이다.
 
 ## 이 포스트에서 다루지 않은 것들
 
@@ -265,20 +405,15 @@ Obsidian에서 작성한 글은 기본적으로 마크다운 형식을 따르지
 4. **다국어 지원과 AI 번역**  
     블로그를 한국어, 영어, 일본어로 제공하고 싶었다. 하지만 매번 세 언어로 직접 작성하기는 어렵고, 나의 외국어 실력도 한계가 있어 AI 번역을 도입했다. 다만 번역 과정에서 마크다운 문법이 변형되거나 깨지는등 다양한 문제가 있어 프롬프트를 몇번 수정하는 일이 있었다.
 
+
+
+> 💡 **전처리기가 궁금하다면**
+> 
+> 비공개 저장소를 제외한 전체 코드는 이미 [GitHub 저장소](https://github.com/ironpark/ironpark.github.io)에서 확인할 수 있다. 특히 전처리기 구현이 궁금하다면 `auto-sync` 브랜치를 확인해보자.
+
+
 ## 앞으로의 계획
 
 현재는 `published` 메타데이터로 발행 여부를 관리하고 있지만, 앞으로는 예약 발행 시스템을 만들어 “정해진 날짜에 조용히 글이 올라가는” 방식을 시도해볼 예정이다.  
 
-이외에도 일정 시간이 지나면 Velog, Medium 등 다른 플랫폼으로 자동 크로스 포스팅을 하거나, 발행과 동시에 Twitter(X), LinkedIn 같은 SNS에 요약과 링크를 뿌리는 기능도 생각중이나 언제 구현할지는 미지수.. 
-
-> 아직은 아이디어 단계지만, GitHub Actions를 무료 티어 한계까지 뽑아 쓰는 게 목표다. (이쯤 되면 기계가 아니라 내가 혹사당하는 기분이긴 하다.)
-
-
----
-
-> 💡 **이 자동화 시스템이 궁금하다면**
-> 
-> 전체 코드는 [GitHub 저장소](https://github.com/ironpark/ironpark.github.io)에서 확인할 수 있다. 
-> 특히 `.github/workflows/` 폴더의 액션 파일들을 보면 자세한 구현 내용을 볼 수 있다.
->
-> 비슷한 시스템을 구축하고 싶다면 언제든 질문을 남겨달라. 같이 더 나은 글쓰기 환경을 만들어가자.
+이외에도 일정 시간이 지나면 Velog, Medium 등 다른 플랫폼으로 자동 크로스 포스팅을 하거나, 발행과 동시에 Twitter(X), LinkedIn 같은 SNS에 요약과 링크를 뿌리는 기능도 생각중이나 언제 구현할지는 아직 미지수로 남아 있다.
