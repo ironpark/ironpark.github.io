@@ -106,6 +106,9 @@ Obsidian에서 작성한 글은 기본적으로 마크다운 형식을 따르지
 4. **다국어 지원과 AI 번역**  
     블로그를 한국어, 영어, 일본어로 제공하고 싶었다. 하지만 매번 세 언어로 직접 작성하기는 어렵고, 나의 외국어 실력도 한계가 있어 AI 번역을 도입했다. 다만 번역 과정에서 마크다운 문법이 변형되거나 깨지는등 다양한 문제가 있어 프롬프트를 몇번 수정하는 일이 있었다.
 ## 구현
+
+### Obsidian Vault 저장소
+
 ```yaml
 name: Contents Sync
 # This workflow syncs contents between the main branch and the blog branch.
@@ -118,7 +121,6 @@ on:
       - ".github/workflows/**"
     branches:
       - main
-
 jobs:
   sync:
     runs-on: ubuntu-latest
@@ -131,7 +133,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: brain
-      
       # Checkout auto-sync branch of ironpark.github.io
       - name: Checkout contents repository
         uses: actions/checkout@v4
@@ -140,7 +141,6 @@ jobs:
           ref: auto-sync
           path: contents
           token: ${{ secrets.GH_TOKEN }}
-
       # Install pnpm & cache settings for auto-sync branch of ironpark.github.io
       - uses: pnpm/action-setup@v4
         name: Install pnpm
@@ -155,17 +155,13 @@ jobs:
       - name: Install dependencies
         working-directory: contents
         run: pnpm install --frozen-lockfile
-
+      # Copy all assets and posts from brain to contents (auto-sync branch)
       - name: Sync Contents
         run: |
-          # Clean up old contents (posts, assets, output)
-          rm -rf /contents/{posts,assets,output}
-          
-          # Create directories and copy files
-          mkdir -p /contents/{posts,assets}
-          cp -r /brain/2.Areas/Blog/*.md /contents/posts/ 2>/dev/null || echo "No markdown files found"
-          cp -r /brain/Z.Assets/* /contents/assets/* 2>/dev/null || echo "No image assets found"
-      
+          rm -rf contents/{posts,assets,output}
+          mkdir -p contents/{posts,assets}
+          cp -r brain/2.Areas/Blog/*.md contents/posts/
+          cp -r brain/Z.Assets/* contents/assets/
       - name: Build Contents
         working-directory: contents
         env:
@@ -179,11 +175,9 @@ jobs:
         run: |
           git add .
           if git diff --staged --quiet; then
-            echo "changes=false" >> $GITHUB_OUTPUT
-            echo "No changes detected"
+            echo "::set-output name=changes::false"
           else
-            echo "changes=true" >> $GITHUB_OUTPUT
-            echo "Changes detected"
+            echo "::set-output name=changes::true"
           fi
       # Push Contents if there are any changes
       - name: Push Contents
@@ -199,6 +193,77 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 ```
+
+### 블로그(프론트) 저장소
+
+```yaml
+name: Build and Deploy to Pages
+
+on:
+  push:
+    branches: ["master"]
+  workflow_dispatch:
+  repository_dispatch:
+    types: [ post-sync ]
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          path: ./sync
+          ref: auto-sync
+      - uses: actions/configure-pages@v5
+        id: pages
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: 10.12.4
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - name: Copy posts
+        run: |
+          rm -rf ./src/content/blog ; mkdir -p ./src/content/blog
+          rm -rf ./static/posts ; mkdir -p ./static/posts
+          cp -r ./sync/output/posts/*.md ./src/content/blog
+          cp -r ./sync/output/static/posts/* ./static/posts
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Build
+        run: pnpm run build
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./build
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@v4
+        id: deployment
+```
+
 ## 앞으로의 계획
 
 현재는 `published` 메타데이터로 발행 여부를 관리하고 있지만, 앞으로는 예약 발행 시스템을 만들어 “정해진 날짜에 조용히 글이 올라가는” 방식을 시도해볼 예정이다.  

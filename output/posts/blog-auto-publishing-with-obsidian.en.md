@@ -25,89 +25,94 @@ originalLang: ko
 ---
 ## Why Is Publishing a Single Post So Complicated?
 
-In [Last Post](/blog/my-ideal-dev-blog), I talked about the reasons for creating my own blog and the rationale behind the technology choices. This time, I want to discuss why publishing even a single post on that blog is so complicated, and how I tried to untangle that process.
+In the [Last Post](/blog/my-ideal-dev-blog), I talked about the reasons for creating my own blog and the rationale behind the technology choices. This time, I want to discuss why publishing even a single post on the blog I built is so complicated, and how I tried to untangle that process.
 
 The biggest inconvenience I felt while running a static blog based on GitHub Pages was **the publishing process itself**.
 
-Since there is no separate database or server environment, there is no management page or dedicated editor. As a result, the basic writing flow of draft → save → edit → publish is not smooth. Moreover, having blog posts and frontend code mixed in one repository is almost a disaster for me, who easily gets sidetracked. That’s why **separation of concerns** was desperately needed.
+Since there’s no separate database or server environment, there’s no management page or dedicated editor. As a result, the basic writing flow—drafting → saving → editing → publishing—is not smooth. On top of that, having blog posts and frontend code mixed in one repository is almost a disaster for me, who easily gets sidetracked. That’s why **separation of concerns** was desperately needed.
 
 ### Everyone Has a Plausible Plan
 ![get punched in the face](/posts/blog-auto-publishing-with-obsidian/get-punched-in-the-face.jpg)
 
-**The original plan was this:**
+**The initial plan was like this:**
 1. Write posts in Obsidian
-2. A Git plugin automatically syncs to my personal repository
+2. A Git plugin automatically syncs to the personal repository
 3. GitHub Actions automatically deploy posts to the blog repository
 
-I was confident this would be a perfect system where I could write and deploy posts instantly from my smartphone, tablet, or desktop. I would focus solely on writing in Obsidian, and GitHub Actions’ automation magic would handle the rest... such a beautiful plan.
+I was confident this would be a perfect system allowing me to write and immediately deploy posts from my smartphone, tablet, or desktop. I could focus solely on writing in Obsidian, and the rest would be handled automatically by the magic of GitHub Actions... It was such a beautiful plan...
 
-Although it worked perfectly in my head, in reality, there were more hidden pitfalls than I expected.
+Though it worked perfectly in my head, in reality, there were more hidden pitfalls than I expected.
 
-> Everyone has a plausible plan — until they get punched in the face.
+> Everyone has a plausible plan  ~~until they get punched in the face~~
 
 ## Exploring Solutions
 
 ### First Plan
 
-
 ![blog-auto-publishing-with-obsidian.en.md 1 mermaid image](/posts/blog-auto-publishing-with-obsidian/blog-auto-publishing-with-obsidian.en-1.svg)
 
-The biggest concern was the **entanglement of automated commits and manual commits within one repository**.  
+The biggest concern was **the situation where automatic commits and manual commits get tangled in the same repository**.  
 What happens if GitHub Actions automatically commits and deploys posts while I’m editing CSS or layout locally?
 
-Most likely, the moment I try to push, the remote repository will already contain commits created by automation. In that case, `git push` will be rejected, and I’ll have to go through the tedious process of `git reset HEAD^ & git pull` to resolve conflicts.
+Most likely, the moment I try to push, the remote repository already has commits created by automation. In that case, `git push` will be rejected, and I’ll have to go through the tedious process of `git reset HEAD^ & git pull` to resolve conflicts.
 
-Because of the automation I built to publish posts, I almost became a **full-time conflict manager**.
+Because of the automation made to publish posts, I almost became a **full-time conflict manager**.
 
 ### Second Plan
-The root cause was that the automation process committed blog posts directly to the main branch.
+The root cause of the problem was that the automation process commits blog posts directly to the main branch.
 
-So, what if **posts were fetched dynamically at build time?**
+So, what if **posts are fetched dynamically at build time?**
+
 ![blog-auto-publishing-with-obsidian.en.md 2 mermaid image](/posts/blog-auto-publishing-with-obsidian/blog-auto-publishing-with-obsidian.en-2.svg)
 
+This way, **the post repository and the blog code repository are completely separated**. Each commits independently in their own domain and only meet at build time. Conflicts? That kind of problem simply can’t happen.
 
-This completely separates the post repository and the blog code repository. Each commits independently in their own domain, meeting only at build time. Conflicts? That structure makes them impossible.
+However, this structure had a fatal flaw. **The public repository had to fetch data from the private repository.** This was a reverse access that violates common security principles.
 
-But this structure had a fatal flaw: **a public repository would have to fetch data from a private repository**. This is a reverse access that violates common security principles.
+My Obsidian Vault is not just a simple blog repository. It’s my personal digital brain containing private diaries, work notes, project ideas, and sometimes sensitive information. The idea that a public blog would access such a personal repository made me uneasy.
 
-My Obsidian Vault is not just a blog repository. It is my personal digital brain containing private diaries, work notes, project ideas, and sometimes sensitive information. The idea of a public blog accessing such a personal repository was unsettling.
-
-- Risk of sensitive information leaking in public repository’s Actions logs
-- Security risk of the entire Vault being exposed if tokens are compromised
+- Sensitive information might be exposed in the public repository’s Actions logs
+- If tokens are stolen, the entire Vault could be compromised
 - Risk of accidentally including private files in the build process
 
-Most of all, because I don’t trust myself, this plan was discarded.
+Above all, because I don’t trust myself, this plan was discarded.
 
 ### The Final?
 
 ![Neon Genesis Evangeliongendo Ikari Gendo](/posts/blog-auto-publishing-with-obsidian/Neon-Genesis-Evangeliongendo-Ikari-Gendo.jpg)
-> Post publishing system ~~humanity~~ improvement plan final version
+> Post publishing system ~~Humanity~~ Enhancement plan final version
 
-So I changed my approach. **What if I automatically commit to the blog repository as originally planned, but use a separate branch?**
-![blog-auto-publishing-with-obsidian.en.md 3 mermaid image](/posts/blog-auto-publishing-with-obsidian/blog-auto-publishing-with-obsidian.en-3.svg)In this structure:
-- GitHub Actions in the Vault pushes processed posts to the blog repository’s `auto-sync` branch
+So I changed my approach. **What if I commit automatically to the blog repository as originally planned, but use a separate branch?**
+
+![blog-auto-publishing-with-obsidian.en.md 3 mermaid image](/posts/blog-auto-publishing-with-obsidian/blog-auto-publishing-with-obsidian.en-3.svg)
+
+In this structure:
+- GitHub Actions in the Vault process posts and push them to the blog repository’s `auto-sync` branch
 - The blog’s build process checks out and merges both `master` and `auto-sync` branches before building
 - Design or code edits are committed directly to the `master` branch as usual
 
-This structure completely eliminates the possibility of conflicts while securely connecting the two repositories.
+This structure completely eliminates the possibility of conflicts while securely linking the two repositories without security issues.
 
-## What This Post Didn’t Cover
+## Things Not Covered in This Post
 
-Although posts written in Obsidian basically follow Markdown format, applying them directly to the blog was difficult. So I had to create a separate preprocessor, and encountered several issues during that process. I didn’t cover them here, but I plan to write about them separately when I get the chance.
+Posts written in Obsidian basically follow Markdown format, but applying them directly to the blog was difficult. So I had to create a separate preprocessor, and encountered various issues during that process. I didn’t cover those here, but I plan to organize and share them separately when I get the chance.
 
 1. **Obsidian Syntax**  
-    Obsidian uses its own Markdown extensions. For example, image embeds like `![[image.png]]` or wikilinks like `[[another note]]` don’t render properly in standard Markdown renderers. So a preprocessing step to convert these was essential.
+    Obsidian uses its own Markdown extension syntax. For example, image embeds like `![[image.png]]` or wikilinks like `[[another note]]` don’t render properly in a standard Markdown renderer. So a preprocessing step to convert these was essential.
     
 2. **Image Paths and Asset Management**  
-    Images in the Obsidian Vault are usually stored in the same folder as notes, but on the web, unified paths like `/assets/images/` are commonly used. At build time, images had to be copied to the correct location and paths adjusted.
+    Obsidian Vault’s image files are usually stored in the same folder as notes, but on the web, unified paths like `/assets/images/` are generally used. At build time, images had to be copied to the correct location and paths adjusted.
     
 3. **Mermaid Diagram Support**  
-    This post used mermaid.js for diagrams. However, to render these properly in a static site build, a separate approach supporting dynamic rendering was needed.
+    This post used mermaid.js for diagrams. However, to render these properly in a static site build, a separate handling method supporting dynamic rendering was needed.
     
 4. **Multilingual Support and AI Translation**  
-    I wanted to offer the blog in Korean, English, and Japanese. Writing in all three languages manually every time was difficult, and my foreign language skills are limited, so I introduced AI translation. However, there were various issues such as Markdown syntax breaking or being altered during translation, requiring multiple prompt adjustments.
+    I wanted to offer the blog in Korean, English, and Japanese. Writing in all three languages every time was difficult, and my foreign language skills are limited, so I introduced AI translation. However, the Markdown syntax sometimes got distorted or broken during translation, requiring multiple prompt adjustments.
 
 ## Implementation
+
+### Obsidian Vault Repository
+
 ```yaml
 name: Contents Sync
 # This workflow syncs contents between the main branch and the blog branch.
@@ -120,7 +125,6 @@ on:
       - ".github/workflows/**"
     branches:
       - main
-
 jobs:
   sync:
     runs-on: ubuntu-latest
@@ -133,7 +137,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: brain
-      
       # Checkout auto-sync branch of ironpark.github.io
       - name: Checkout contents repository
         uses: actions/checkout@v4
@@ -142,7 +145,6 @@ jobs:
           ref: auto-sync
           path: contents
           token: ${{ secrets.GH_TOKEN }}
-
       # Install pnpm & cache settings for auto-sync branch of ironpark.github.io
       - uses: pnpm/action-setup@v4
         name: Install pnpm
@@ -157,17 +159,13 @@ jobs:
       - name: Install dependencies
         working-directory: contents
         run: pnpm install --frozen-lockfile
-
+      # Copy all assets and posts from brain to contents (auto-sync branch)
       - name: Sync Contents
         run: |
-          # Clean up old contents (posts, assets, output)
-          rm -rf /contents/{posts,assets,output}
-          
-          # Create directories and copy files
-          mkdir -p /contents/{posts,assets}
-          cp -r /brain/2.Areas/Blog/*.md /contents/posts/ 2>/dev/null || echo "No markdown files found"
-          cp -r /brain/Z.Assets/* /contents/assets/* 2>/dev/null || echo "No image assets found"
-      
+          rm -rf contents/{posts,assets,output}
+          mkdir -p contents/{posts,assets}
+          cp -r brain/2.Areas/Blog/*.md contents/posts/
+          cp -r brain/Z.Assets/* contents/assets/
       - name: Build Contents
         working-directory: contents
         env:
@@ -181,11 +179,9 @@ jobs:
         run: |
           git add .
           if git diff --staged --quiet; then
-            echo "changes=false" >> $GITHUB_OUTPUT
-            echo "No changes detected"
+            echo "::set-output name=changes::false"
           else
-            echo "changes=true" >> $GITHUB_OUTPUT
-            echo "Changes detected"
+            echo "::set-output name=changes::true"
           fi
       # Push Contents if there are any changes
       - name: Push Contents
@@ -201,19 +197,90 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 ```
+
+### Blog (Frontend) Repository
+
+```yaml
+name: Build and Deploy to Pages
+
+on:
+  push:
+    branches: ["master"]
+  workflow_dispatch:
+  repository_dispatch:
+    types: [ post-sync ]
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          path: ./sync
+          ref: auto-sync
+      - uses: actions/configure-pages@v5
+        id: pages
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: 10.12.4
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - name: Copy posts
+        run: |
+          rm -rf ./src/content/blog ; mkdir -p ./src/content/blog
+          rm -rf ./static/posts ; mkdir -p ./static/posts
+          cp -r ./sync/output/posts/*.md ./src/content/blog
+          cp -r ./sync/output/static/posts/* ./static/posts
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Build
+        run: pnpm run build
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./build
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@v4
+        id: deployment
+```
+
 ## Future Plans
 
-Currently, publication status is managed with the `published` metadata, but I plan to build a scheduled publishing system that “quietly posts articles on predetermined dates.”
+Currently, post publication status is managed by the `published` metadata, but in the future, I plan to build a scheduled publishing system to quietly post articles on predetermined dates.
 
-I’m also considering automatic cross-posting to other platforms like Velog or Medium after a certain period, or posting summaries and links to social media like Twitter (X) and LinkedIn simultaneously with publication. However, when or if these will be implemented is still uncertain.
+Besides that, I’m also considering features like automatically cross-posting to other platforms like Velog or Medium after a certain time, or posting summaries and links to social media like Twitter (X) and LinkedIn simultaneously with publication. However, when these will be implemented is still uncertain...
 
-> For now, it’s just an idea, but my goal is to squeeze every bit out of GitHub Actions’ free tier. (At this point, it feels less like the machine is working and more like I’m being overworked.)
+> It’s still at the idea stage, but my goal is to push GitHub Actions to the limits of the free tier. (At this point, it feels less like the machine is being worked hard and more like I am.)
 
 ---
 
 > 💡 **If you’re curious about this automation system**
 > 
-> The full code is available on the [GitHub repository](https://github.com/ironpark/ironpark.github.io).  
+> The full code is available in the [GitHub repository](https://github.com/ironpark/ironpark.github.io).  
 > Especially check out the action files in the `.github/workflows/` folder for detailed implementation.
 >
 > If you want to build a similar system, feel free to ask questions anytime. Let’s create a better writing environment together.
