@@ -107,7 +107,97 @@ Obsidian에서 작성한 글은 기본적으로 마크다운 형식을 따르지
     블로그를 한국어, 영어, 일본어로 제공하고 싶었다. 하지만 매번 세 언어로 직접 작성하기는 어렵고, 나의 외국어 실력도 한계가 있어 AI 번역을 도입했다. 다만 번역 과정에서 마크다운 문법이 변형되거나 깨지는등 다양한 문제가 있어 프롬프트를 몇번 수정하는 일이 있었다.
 ## 구현
 ```yaml
+name: Contents Sync
+# This workflow syncs contents between the main branch and the blog branch.
+on:
+  workflow_dispatch:
+  push:
+    # 불필요한 workflow re-run을 방지하기 위해 특정 파일이 변경될 때만 실행
+    paths:
+      - "2.Areas/Blog/*.md"
+      - ".github/workflows/**"
+    branches:
+      - main
 
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+      # Checkout brain repository (current repository)
+      - name: Checkout brain repository
+        uses: actions/checkout@v4
+        with:
+          path: brain
+      
+      # Checkout auto-sync branch of ironpark.github.io
+      - name: Checkout contents repository
+        uses: actions/checkout@v4
+        with:
+          repository: ironpark/ironpark.github.io
+          ref: auto-sync
+          path: contents
+          token: ${{ secrets.GH_TOKEN }}
+
+      # Install pnpm & cache settings for auto-sync branch of ironpark.github.io
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: 10.12.4
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+          cache-dependency-path: contents/pnpm-lock.yaml
+      - name: Install dependencies
+        working-directory: contents
+        run: pnpm install --frozen-lockfile
+
+      - name: Sync Contents
+        run: |
+          # Clean up old contents (posts, assets, output)
+          rm -rf /contents/{posts,assets,output}
+          
+          # Create directories and copy files
+          mkdir -p /contents/{posts,assets}
+          cp -r /brain/2.Areas/Blog/*.md /contents/posts/ 2>/dev/null || echo "No markdown files found"
+          cp -r /brain/Z.Assets /contents/assets 2>/dev/null || echo "No image assets found"
+      
+      - name: Build Contents
+        working-directory: contents
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          pnpm build
+      # Check for changes in contents and push if there are any changes
+      - name: Check for changes
+        id: check_changes
+        working-directory: contents
+        run: |
+          git add .
+          if git diff --staged --quiet; then
+            echo "changes=false" >> $GITHUB_OUTPUT
+            echo "No changes detected"
+          else
+            echo "changes=true" >> $GITHUB_OUTPUT
+            echo "Changes detected"
+          fi
+      # Push Contents if there are any changes
+      - name: Push Contents
+        if: steps.check_changes.outputs.changes == 'true'
+        working-directory: contents
+        run: |
+          git config --global user.email "auto-sync-action@github.com"
+          git config --global user.name "auto-sync-action"
+          git commit -m "sync contents from ${{ steps.date.outputs.date }}"
+          git push origin auto-sync
+      - name: Run Publish
+        run: gh api /repos/ironpark/ironpark.github.io/dispatches -f event_type='post-sync'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 ```
 ## 앞으로의 계획
 
