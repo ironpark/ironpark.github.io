@@ -3,7 +3,7 @@ import os from 'os'
 import path from 'path'
 import { executeSequence, MdPreProcessorConfig} from './lib/md.js'
 import { translate, translateMetadata } from './lib/trans.js'
-import { mermaidProcessor, wikilinkProcessor, imageCopyProcessor} from './processors.js'
+import { mermaidProcessor, wikilinkProcessorV2, imageCopyProcessor} from './processors.js'
 import utils from './lib/utils.js'
 import { Cache } from './lib/cache.js'
 
@@ -81,23 +81,40 @@ const translatePost: MdPreProcessorConfig[] = targetLangs.map(lang => {
         }
     }
 })
+let originalPostsData:{
+    [title:string]:{
+        slug:string,
+    }
+} = {}
 
 // Translate Post
-executeSequence([...translatePost,{
-    markdownPath: config.temp,
-    codeblock: {
-        // mermaid codeblock to svg
-        "mermaid": mermaidProcessor(config.cache, path.join(config.output, "static", "posts")),
-    },
-    processors: {
-        paragraph: [
-            // wikilink to normal markdown link
-            wikilinkProcessor(),
-            // image copy from original assets to output assets
-            imageCopyProcessor(config.assets, path.join(config.output, "static", "posts"))
-        ],
-    },
-    processedMd: async (src:string, {markdown, metadata}) => {
-        fs.writeFileSync(path.join(config.output, "posts", `${metadata.slug}.${metadata.lang}.md`), markdown)
+executeSequence([
+    {
+        markdownPath: config.originalPosts,
+        processedMd: async (src:string, {markdown, metadata}) => {
+            const title = (src.split("/").pop() as string).split(".md")[0]
+            originalPostsData[title] = {
+                slug: metadata.slug,
+            }
+        }
     }
-}])
+    ,...translatePost,
+    {
+        markdownPath: config.temp,
+        codeblock: {
+            // mermaid codeblock to svg
+            "mermaid": mermaidProcessor(config.cache, path.join(config.output, "static", "posts")),
+        },
+        processors: {
+            paragraph: [
+                // wikilink to normal markdown link
+                wikilinkProcessorV2(originalPostsData),
+                // image copy from original assets to output assets
+                imageCopyProcessor(config.assets, path.join(config.output, "static", "posts"))
+            ],
+        },
+        processedMd: async (src:string, {markdown, metadata}) => {
+            fs.writeFileSync(path.join(config.output, "posts", `${metadata.slug}.${metadata.lang}.md`), markdown)
+        }
+    },
+])

@@ -3,7 +3,7 @@ import os from 'os';
 import path from 'path';
 import { executeSequence } from './lib/md.js';
 import { translate, translateMetadata } from './lib/trans.js';
-import { mermaidProcessor, wikilinkProcessor, imageCopyProcessor } from './processors.js';
+import { mermaidProcessor, wikilinkProcessorV2, imageCopyProcessor } from './processors.js';
 import utils from './lib/utils.js';
 import { Cache } from './lib/cache.js';
 // create temp dir
@@ -76,8 +76,20 @@ const translatePost = targetLangs.map(lang => {
         }
     };
 });
+let originalPostsData = {};
 // Translate Post
-executeSequence([...translatePost, {
+executeSequence([
+    {
+        markdownPath: config.originalPosts,
+        processedMd: async (src, { markdown, metadata }) => {
+            const title = src.split("/").pop().split(".md")[0];
+            originalPostsData[title] = {
+                slug: metadata.slug,
+            };
+        }
+    },
+    ...translatePost,
+    {
         markdownPath: config.temp,
         codeblock: {
             // mermaid codeblock to svg
@@ -86,7 +98,7 @@ executeSequence([...translatePost, {
         processors: {
             paragraph: [
                 // wikilink to normal markdown link
-                wikilinkProcessor(),
+                wikilinkProcessorV2(originalPostsData),
                 // image copy from original assets to output assets
                 imageCopyProcessor(config.assets, path.join(config.output, "static", "posts"))
             ],
@@ -94,5 +106,6 @@ executeSequence([...translatePost, {
         processedMd: async (src, { markdown, metadata }) => {
             fs.writeFileSync(path.join(config.output, "posts", `${metadata.slug}.${metadata.lang}.md`), markdown);
         }
-    }]);
+    },
+]);
 //# sourceMappingURL=main.js.map

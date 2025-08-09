@@ -60,23 +60,50 @@ export const mermaidProcessor = (cacheDir:string, assetsDir:string) =>{
     }
 }
 
-// ![[filename.imageExt]] -> ![](/posts/filename.imageExt)
-export const wikilinkProcessor = () => {
-    const match = /!\[\[(.*?)\.(.*?)\]\](.*)/
-    return (metadata:MdMetadata, token:Token) => {
-        const originalRaw = token.raw
-        if(match.test(originalRaw)){
-            // check extension is md return token.raw
-            const groups = token.raw.match(match)
-            if(groups){
-                if(groups[2].endsWith('.md')){
-                    return token.raw
-                }
-                const imagePath = path.join("/posts", metadata.slug, groups[1]+"."+groups[2])
-                return `![${groups[1]}](${imagePath})${groups[3] || ""}`
+// Improved version 2 with better structure and performance
+export const wikilinkProcessorV2 = (originalPostsData:{[title:string]:{slug:string}}) => {
+    const markdownExtensions = new Set(['md', 'markdown', 'mdx'])
+    
+    return (metadata: MdMetadata, token: Token) => {
+        let content = token.raw
+        
+        // Process image links: ![[filename.ext]]
+        content = content.replace(/!\[\[([^\]]+)\]\]/g, (match, fullname) => {
+            // Extract filename and extension
+            const lastDotIndex = fullname.lastIndexOf('.')
+            const hasExtension = lastDotIndex > 0
+            const filename = hasExtension ? fullname.substring(0, lastDotIndex) : fullname
+            const ext = hasExtension ? fullname.substring(lastDotIndex + 1) : ''
+            
+            // Skip markdown file references
+            if (ext && markdownExtensions.has(ext.toLowerCase())) {
+                return match
             }
-        }
-        return token.raw
+            
+            const imagePath = path.join("/posts", metadata.slug, fullname)
+            const altText = filename.replace(/[-_]/g, ' ')
+            return `![${altText}](${imagePath})`
+        })
+        
+        // Process link with alias: [[target|alias]]
+        content = content.replace(/\[\[([^|\]]+)\|([^|\]]+)\]\]/g, (match, target, alias) => {
+            if (originalPostsData[target.trim()]) {
+                const linkPath = path.join("/blog", originalPostsData[target.trim()].slug)
+                return `[${alias}](${linkPath})`
+            }
+            return match
+        })
+        
+        // Process simple link: [[target]]
+        content = content.replace(/\[\[([^|\]]+)\]\]/g, (match, target) => {
+            if (originalPostsData[target.trim()]) {
+                const linkPath = path.join("/blog", originalPostsData[target.trim()].slug)
+                return `[${target}](${linkPath})`
+            }
+            return match
+        })
+        
+        return content
     }
 }
 
@@ -101,6 +128,6 @@ export const imageCopyProcessor = (originalAssetsDir:string, outputAssetsDir:str
 
 export default {
     mermaidProcessor,
-    wikilinkProcessor,
+    wikilinkProcessorV2,
     imageCopyProcessor,
 }

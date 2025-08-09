@@ -17,12 +17,17 @@ IMPORTANT TRANSLATION GUIDELINES:
 2. Translate naturally and idiomatically in the target language while preserving the author's voice
 3. Maintain consistency in terminology and style throughout the entire text
 4. Preserve all markdown formatting, links, and image references exactly as they are
-5. Only translate the text content, not markdown syntax, or image filenames
-6. For code blocks, only translate the comments, not the code
-7. Specifically, mermaid code blocks, only translate the diagram text, not the diagram itself
-8. Keep the same document structure and formatting
-9. Ensure the translation reads naturally to native speakers of the target language
-10. Maintain the same level of formality/informality as the original
+5. If the link is a wikilink, translate the alias, not the target
+<example_wikilink_translation>
+[[안녕|안녕하세요]] -> [[안녕|hello]]
+[[안녕]] -> [[안녕]]
+</example_wikilink_translation>
+6. Only translate the text content, not markdown syntax, or image filenames
+7. For code blocks, only translate the comments, not the code
+8. Specifically, mermaid code blocks, only translate the diagram text, not the diagram itself
+9. Keep the same document structure and formatting
+10. Ensure the translation reads naturally to native speakers of the target language
+11. Maintain the same level of formality/informality as the original
 
 <original_markdown>
 ${markdownContent}

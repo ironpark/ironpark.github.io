@@ -56,22 +56,79 @@ export const mermaidProcessor = (cacheDir, assetsDir) => {
     };
 };
 // ![[filename.imageExt]] -> ![](/posts/filename.imageExt)
-export const wikilinkProcessor = () => {
-    const match = /!\[\[(.*?)\.(.*?)\]\](.*)/;
+// [[doc name]] -> [doc name](/posts/slug)
+// [[doc name|alias]] -> [alias](/posts/slug)
+export const wikilinkProcessor = (originalPostsData) => {
+    const imageMatch = /!\[\[(.*?)\.(.*?)\]\](.*)/;
+    const linkMatch = /\[\[(.*?)\]\](.*)/;
+    const linkAliasMatch = /\[\[(.*?)\|(.*?)\]\](.*)/;
     return (metadata, token) => {
         const originalRaw = token.raw;
-        if (match.test(originalRaw)) {
+        if (imageMatch.test(originalRaw)) {
             // check extension is md return token.raw
-            const groups = token.raw.match(match);
+            const groups = originalRaw.match(imageMatch);
             if (groups) {
                 if (groups[2].endsWith('.md')) {
-                    return token.raw;
+                    return originalRaw;
                 }
                 const imagePath = path.join("/posts", metadata.slug, groups[1] + "." + groups[2]);
                 return `![${groups[1]}](${imagePath})${groups[3] || ""}`;
             }
         }
-        return token.raw;
+        if (linkMatch.test(originalRaw)) {
+            if (linkAliasMatch.test(originalRaw)) {
+                const groups = originalRaw.match(linkAliasMatch);
+                if (groups) {
+                    const linkPath = path.join("/posts", originalPostsData[groups[1]].slug, groups[1]);
+                    return `[${groups[2]}](${linkPath})${groups[3] || ""}`;
+                }
+            }
+            const groups = originalRaw.match(linkMatch);
+            if (groups) {
+                const linkPath = path.join("/posts", originalPostsData[groups[1]].slug, groups[1]);
+                return `[${groups[1]}](${linkPath})${groups[2] || ""}`;
+            }
+        }
+        return originalRaw;
+    };
+};
+// Improved version 2 with better structure and performance
+export const wikilinkProcessorV2 = (originalPostsData) => {
+    const markdownExtensions = new Set(['md', 'markdown', 'mdx']);
+    return (metadata, token) => {
+        let content = token.raw;
+        // Process image links: ![[filename.ext]]
+        content = content.replace(/!\[\[([^\]]+)\]\]/g, (match, fullname) => {
+            // Extract filename and extension
+            const lastDotIndex = fullname.lastIndexOf('.');
+            const hasExtension = lastDotIndex > 0;
+            const filename = hasExtension ? fullname.substring(0, lastDotIndex) : fullname;
+            const ext = hasExtension ? fullname.substring(lastDotIndex + 1) : '';
+            // Skip markdown file references
+            if (ext && markdownExtensions.has(ext.toLowerCase())) {
+                return match;
+            }
+            const imagePath = path.join("/posts", metadata.slug, fullname);
+            const altText = filename.replace(/[-_]/g, ' ');
+            return `![${altText}](${imagePath})`;
+        });
+        // Process link with alias: [[target|alias]]
+        content = content.replace(/\[\[([^|\]]+)\|([^|\]]+)\]\]/g, (match, target, alias) => {
+            if (originalPostsData[target.trim()]) {
+                const linkPath = path.join("/blog", originalPostsData[target.trim()].slug);
+                return `[${alias}](${linkPath})`;
+            }
+            return match;
+        });
+        // Process simple link: [[target]]
+        content = content.replace(/\[\[([^|\]]+)\]\]/g, (match, target) => {
+            if (originalPostsData[target.trim()]) {
+                const linkPath = path.join("/blog", originalPostsData[target.trim()].slug);
+                return `[${target}](${linkPath})`;
+            }
+            return match;
+        });
+        return content;
     };
 };
 export const imageCopyProcessor = (originalAssetsDir, outputAssetsDir) => {

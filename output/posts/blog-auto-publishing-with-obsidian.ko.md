@@ -21,17 +21,16 @@ lang: ko
 thumbnail: null
 originalLang: ko
 ---
-
 ## 글 하나 발행하기가 왜 이렇게 복잡해?
 
-[지난 포스트](https://ironpark.github.io/posts/my-ideal-dev-blog/)에서는 블로그를 만들게된 이유와 기술선택의 경위에 대하여 이야기했다. 이번에는, 그렇게 만든 블로그에서 글 하나를 발행하기까지 왜 이렇게 복잡한지, 그리고 그 과정을 어떻게 풀어보려 했는지 이야기해보려 한다.
+[지난 포스트](/blog/my-ideal-dev-blog) 에서는 블로그를 만들게된 이유와 기술선택의 경위에 대하여 이야기했다. 이번에는, 그렇게 만든 블로그에서 글 하나를 발행하기까지 왜 이렇게 복잡한지, 그리고 그 과정을 어떻게 풀어보려 했는지 이야기해보려 한다.
 
 GitHub Pages 기반의 정적 블로그를 운영하면서 느낀 가장 큰 불편함은 **발행 과정 그 자체**다.
 
 별도의 데이터베이스나 서버 환경이 없으니 관리 페이지나 전용 에디터도 없다. 그 결과 초안 작성 → 저장 → 수정 → 발행으로 이어지는 기본적인 글쓰기 흐름이 매끄럽지 않다. 게다가 글과 프론트엔드 코드가 한 저장소에 뒤섞여 있는 환경은, 조금만 방심해도 삼천포로 빠지는 나에겐 재앙에 가깝다. 그래서 **관심사 분리**가 절실했다.
 
 ### 누구나 그럴싸한 계획은 있다
-![get-punched-in-the-face](/posts/blog-auto-publishing-with-obsidian/get-punched-in-the-face.jpg)
+![get punched in the face](/posts/blog-auto-publishing-with-obsidian/get-punched-in-the-face.jpg)
 
 **나의 계획은 이랬다:**
 1. Obsidian에서 글을 작성한다
@@ -81,7 +80,8 @@ Personal Access Token을 사용해 비공개 저장소를 클론하는 방법도
 
 ### 마지막?
 
-![gendo-Ikari](/posts/blog-auto-publishing-with-obsidian/gendo-Ikari.jpg)> 포스트 발행 시스템 ~~인류~~ 보완 계획 최종본
+![Neon Genesis Evangeliongendo Ikari Gendo](/posts/blog-auto-publishing-with-obsidian/Neon-Genesis-Evangeliongendo-Ikari-Gendo.jpg)
+> 포스트 발행 시스템 ~~인류~~ 보완 계획 최종본
 
 그래서 발상을 전환했다. **처음 계획대로 블로그 저장소에 자동으로 커밋하되, 별도의 브랜치를 사용하면 어떨까?**
 ![blog-auto-publishing-with-obsidian.ko.md 3 mermaid image](/posts/blog-auto-publishing-with-obsidian/blog-auto-publishing-with-obsidian.ko-3.svg)이 구조에서는:
