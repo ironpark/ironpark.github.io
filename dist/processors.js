@@ -55,43 +55,6 @@ export const mermaidProcessor = (cacheDir, assetsDir) => {
         return `![${mdFilename} ${counting[file]} ${lang} image](${linkPath})`;
     };
 };
-// ![[filename.imageExt]] -> ![](/posts/filename.imageExt)
-// [[doc name]] -> [doc name](/posts/slug)
-// [[doc name|alias]] -> [alias](/posts/slug)
-export const wikilinkProcessor = (originalPostsData) => {
-    const imageMatch = /!\[\[(.*?)\.(.*?)\]\](.*)/;
-    const linkMatch = /\[\[(.*?)\]\](.*)/;
-    const linkAliasMatch = /\[\[(.*?)\|(.*?)\]\](.*)/;
-    return (metadata, token) => {
-        const originalRaw = token.raw;
-        if (imageMatch.test(originalRaw)) {
-            // check extension is md return token.raw
-            const groups = originalRaw.match(imageMatch);
-            if (groups) {
-                if (groups[2].endsWith('.md')) {
-                    return originalRaw;
-                }
-                const imagePath = path.join("/posts", metadata.slug, groups[1] + "." + groups[2]);
-                return `![${groups[1]}](${imagePath})${groups[3] || ""}`;
-            }
-        }
-        if (linkMatch.test(originalRaw)) {
-            if (linkAliasMatch.test(originalRaw)) {
-                const groups = originalRaw.match(linkAliasMatch);
-                if (groups) {
-                    const linkPath = path.join("/posts", originalPostsData[groups[1]].slug, groups[1]);
-                    return `[${groups[2]}](${linkPath})${groups[3] || ""}`;
-                }
-            }
-            const groups = originalRaw.match(linkMatch);
-            if (groups) {
-                const linkPath = path.join("/posts", originalPostsData[groups[1]].slug, groups[1]);
-                return `[${groups[1]}](${linkPath})${groups[2] || ""}`;
-            }
-        }
-        return originalRaw;
-    };
-};
 // Improved version 2 with better structure and performance
 export const wikilinkProcessorV2 = (originalPostsData) => {
     const markdownExtensions = new Set(['md', 'markdown', 'mdx']);
@@ -151,7 +114,7 @@ export const imageCopyProcessor = (originalAssetsDir, outputAssetsDir) => {
 };
 export default {
     mermaidProcessor,
-    wikilinkProcessor,
+    wikilinkProcessorV2,
     imageCopyProcessor,
 };
 //# sourceMappingURL=processors.js.map
