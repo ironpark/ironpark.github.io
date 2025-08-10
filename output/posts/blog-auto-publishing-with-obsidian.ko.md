@@ -82,16 +82,19 @@ GitHub Actions가 글을 자동으로 커밋하고 배포하는 동안, 내가 �
 ![Neon Genesis Evangeliongendo Ikari Gendo](/posts/blog-auto-publishing-with-obsidian/Neon-Genesis-Evangeliongendo-Ikari-Gendo.jpg)
 > 포스트 발행 시스템 ~~인류~~ 보완 계획 최종본
 
-머리를 열심히 굴려본 결과 나름의 답을 찾는데 성공했다. **처음 계획대로 블로그 저장소에 자동으로 커밋하되, 별도의 브랜치를 사용하면 어떨까?**
+머리를 열심히 굴려본 결과 나름의 답을 찾는데 성공했다. **처음 계획대로 블로그 저장소에 자동으로 커밋하되, 별도의 브랜치를 사용하면 어떨까?**  
 
-![blog-auto-publishing-with-obsidian.ko.md 3 mermaid image](/posts/blog-auto-publishing-with-obsidian/blog-auto-publishing-with-obsidian.ko-3.svg)이 구조에서는:
+![blog-auto-publishing-with-obsidian.ko.md 3 mermaid image](/posts/blog-auto-publishing-with-obsidian/blog-auto-publishing-with-obsidian.ko-3.svg)
+
 - Vault의 GitHub Actions가 포스트를 처리해 블로그 저장소의 `auto-sync` 브랜치에 푸시 이후 
 - 블로그의 빌드 프로세스가 `master`와 `auto-sync` 브랜치를 모두 체크아웃해 병합 후 빌드
 - 디자인이나 코드 수정은 평소처럼 `master` 브랜치에 직접 커밋
 
 충돌의 여지를 원천 차단하면서도, 보안 문제 없이 두 저장소를 연결할 수 있는 구조다.
 
-## 실제 구현
+## 계획은 완벽하다
+
+### 실제 구현
 
 개발자는 말보다 코드 아니겠는가? 바로 아래 코드가 위 계획을 실현시킨 GitHub Actions 파일이다.
 
@@ -337,7 +340,7 @@ on:
   run: gh api /repos/ironpark/ironpark.github.io/dispatches -f event_type='post-sync'
 ```
 
-GitHub CLI를 사용해 블로그 저장소에 `repository_dispatch` 이벤트를 발생시킨다. 이게 두 워크플로우를 연결하는 핵심 고리다. 여기서 `event_type`은 ‘어떤 이유로 트리거됐는지’를 구분하기 위한 라벨 같은 역할을 한다.
+GitHub CLI를 사용해 블로그 저장소에 `repository_dispatch` 이벤트를 발생시킨다. 이게 두 워크플로우를 연결하는 핵심 고리다. 여기서 `event_type`은 ‘어떤 이유로 트리거됐는지’를 구분하기 위한 라벨 역할을 한다.
 #### 블로그 저장소 워크플로우 분석
 
 이제 블로그 저장소의 `Build and Deploy to Pages` 워크플로우를 보자.
@@ -370,7 +373,7 @@ on:
     cp -r ./sync/output/static/posts/* ./static/posts  # 이미지 등 정적 파일
 ```
 
-`master` 브랜치의 코드와 `auto-sync` 브랜치의 콘텐츠를 합쳐서 빌드한다. 이 방식으로 코드와 콘텐츠의 완벽한 분리를 달성했다.
+`master` 브랜치의 코드와 `auto-sync` 브랜치의 콘텐츠를 합쳐서 빌드한다.  드디어 코드와 콘텐츠의 완벽한 분리를 달성했다.
 #### 보안 고려사항
 
 두 워크플로우 모두 `${{ secrets.GH_TOKEN }}`을 사용한다. 이 토큰은:
@@ -379,7 +382,7 @@ on:
 
 이렇게 하면 정말 만에하나 토큰이 노출되더라도 피해를 최소화할 수 있다.
 
-#### 왜 이렇게 복잡하게?
+### 왜 이렇게 복잡하게?
 
 단순히 "글 하나 발행하는데 뭘 이렇게 복잡하게 만들었나" 싶을 수도 있다.  하지만 이에 따라 얻게 된 것은 절대 작지 않다.
 
