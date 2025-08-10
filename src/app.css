@@ -1,7 +1,8 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 @import "tw-animate-css";
-@import "./app.postcss";
+/* @import "./app.postcss"; */
+@custom-variant prose-inline-code (&.prose :where(:not(pre)>code):not(:where([class~="not-prose"] *)));
 
 @custom-variant dark (&:is(.dark *));
 

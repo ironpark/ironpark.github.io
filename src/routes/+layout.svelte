@@ -26,7 +26,7 @@
     page.url.pathname.split("/").at(-1)?.toUpperCase() || ""
   );
 </script>
-
+<ModeWatcher />
 <svelte:head>
   <title>{`IRONPARK | ${title}`}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -50,7 +50,6 @@
   {/if}
 </svelte:head>
 
-<ModeWatcher />
 <div style="display:none">
   {#each locales as locale}
     <a href={localizeHref(page.url.pathname, { locale })}>{locale}</a>
@@ -145,7 +144,7 @@
 
         <!-- Theme Toggle -->
         <button
-          onclick={toggleMode}
+          onclick={() => toggleMode()}
           class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background hover:bg-accent hover:text-accent-foreground h-9 w-9 relative"
           aria-label="Toggle theme"
         >

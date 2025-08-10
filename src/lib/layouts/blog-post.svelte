@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { fade } from "svelte/transition";
+  // import { fade } from "svelte/transition";
   import * as m from "$lib/paraglide/messages";
   import type { Snippet } from "svelte";
   import { getLocale } from "$lib/paraglide/runtime";
@@ -33,10 +33,9 @@
 </script>
 
 <article
-  class="container px-4 mx-auto max-w-4xl py-16"
-  in:fade={{ duration: 300 }}
+  class="container px-4 mx-auto max-w-4xl pt-10"
 >
-  <header class="space-y-4 mb-8">
+  <header class="space-y-4">
     <div class="flex items-center gap-4 text-sm text-muted-foreground">
       <time>
         {new Date(created).toLocaleDateString("en-US", {
@@ -50,7 +49,6 @@
         <span>{reading.text}</span>
       {/if}
     </div>
-
     <h1 class="text-4xl md:text-5xl font-bold tracking-tight">
       {title}
     </h1>
@@ -70,27 +68,23 @@
         {/each}
       </div>
     {/if}
+    <div class="border-b border-dashed dark:border-white/50 border-black/50 my-10"></div>
   </header>
+  <!-- prose-code:bg-muted prose-code:px-1.5 prose-code:py-1 prose-code:mx-1 prose-code:rounded prose-code:text-sm prose-code:font-mono  -->
 
-  <div
-    class="prose prose-lg prose-neutral dark:prose-invert max-w-none
-    prose-headings:font-bold prose-headings:tracking-tight
-    prose-headings:text-foreground dark:prose-headings:text-foreground
-    prose-h1:text-4xl prose-h1:mt-8 prose-h1:mb-4
-    prose-h2:text-3xl prose-h2:mt-6 prose-h2:mb-4
-    prose-h3:text-2xl prose-h3:mt-6 prose-h3:mb-4
-    prose-h4:text-xl prose-h4:mt-4 prose-h4:mb-2
-    prose-p:text-base prose-p:leading-7 prose-p:my-4 prose-p:text-muted-foreground dark:prose-p:text-muted-foreground
-    prose-a:text-primary prose-a:no-underline hover:prose-a:underline
-    prose-strong:font-semibold prose-strong:text-foreground dark:prose-strong:text-foreground
-    prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:font-mono prose-code:text-foreground dark:prose-code:text-foreground
-    prose-pre:bg-zinc-900 dark:prose-pre:bg-zinc-950 prose-pre:text-zinc-50 prose-pre:rounded-lg prose-pre:overflow-x-auto
-    prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-muted-foreground dark:prose-blockquote:text-muted-foreground
-    prose-ul:list-disc prose-ul:pl-6 prose-ul:text-muted-foreground dark:prose-ul:text-muted-foreground
-    prose-ol:list-decimal prose-ol:pl-6 prose-ol:text-muted-foreground dark:prose-ol:text-muted-foreground
-    prose-li:my-2
-    prose-hr:border-border dark:prose-hr:border-border"
-  >
+  <div class="prose prose-lg prose-neutral dark:prose-invert max-w-none prose-li:my-0 
+  prose-h1:my-8
+  prose-h2:my-6
+  prose-h3:my-4
+  prose-h4:my-2
+  prose-code:font-mono prose-code:text-sm
+  prose-inline-code:before:content-[''] prose-inline-code:after:content-[''] prose-inline-code:inline-block
+  prose-inline-code:bg-muted prose-inline-code:px-1.5 prose-inline-code:py-0.5 prose-inline-code:mx-0.5 prose-inline-code:rounded prose-inline-code:text-sm prose-inline-code:font-mono
+  prose-ol:list-decimal prose-ol:pl-6 prose-ol:my-0 prose-ol:mt-4
+  prose-li:mt-0.5 prose-li:p-0
+  prose-ul:list-disc prose-ul:pl-6 prose-ul:my-0 prose-ul:mt-4
+  prose-p:mb-0 prose-p:mt-4
+  ">
     {@render children?.()}
   </div>
   <div class="my-15 border-b border-dashed dark:border-white/50 border-black/50"></div>
@@ -165,3 +159,15 @@
   </footer>
 </article>
 
+<style lang="postcss">
+  @import "tailwindcss";
+  @plugin "@tailwindcss/typography";
+  @import "tw-animate-css";
+  /* @import "/src/app.postcss"; */
+  
+  .prose-content {
+    code:not(pre > code) {
+      @apply bg-muted px-1.5 py-1 mx-1 rounded text-sm font-mono;
+    }
+  }
+</style>
