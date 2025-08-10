@@ -48,7 +48,7 @@ GitHub Pages 기반의 정적 블로그를 운영하면서 느낀 가장 큰 불
 ### 첫번째 계획
 
 
-![blog-auto-publishing-with-obsidian.ko.md 3 mermaid image](/posts/blog-auto-publishing-with-obsidian/blog-auto-publishing-with-obsidian.ko-1.svg)
+![blog-auto-publishing-with-obsidian.ko.md 1 mermaid image](/posts/blog-auto-publishing-with-obsidian/blog-auto-publishing-with-obsidian.ko-1.svg)
 
 가장 우려됐던 부분은 **자동 커밋과 수동 커밋이 한 저장소 안에서 얽히는 상황**이었다.  
 GitHub Actions가 글을 자동으로 커밋하고 배포하는 동안, 내가 로컬에서 CSS나 레이아웃을 수정한다면 어떻게 될까?
@@ -61,7 +61,7 @@ GitHub Actions가 글을 자동으로 커밋하고 배포하는 동안, 내가 �
 근본적인 문제의 원인은 자동화 프로세스에서 블로그 포스트를 직접 메인 브랜치에 커밋하는것이다. 
 
 그렇다면. **빌드 시점에 포스트를 동적으로 가져오면 어떨까?**
-![blog-auto-publishing-with-obsidian.ko.md 3 mermaid image](/posts/blog-auto-publishing-with-obsidian/blog-auto-publishing-with-obsidian.ko-2.svg)
+![blog-auto-publishing-with-obsidian.ko.md 2 mermaid image](/posts/blog-auto-publishing-with-obsidian/blog-auto-publishing-with-obsidian.ko-2.svg)
 
 
 이렇게 하면 **포스트 저장소와 블로그 코드 저장소가 완전히 분리**된다. 각자의 영역에서 독립적으로 커밋하고, 빌드 시점에만 만나는 것이다. 충돌? 그런 건 애초에 발생할 수 없는 구조다.
