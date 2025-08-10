@@ -48,7 +48,7 @@ GitHub Pagesベースの静的ブログを運営して感じた最大の不便�
 ### 第一案
 
 
-![blog-auto-publishing-with-obsidian.ja.md 1 mermaid image](/posts/blog-auto-publishing-with-obsidian/blog-auto-publishing-with-obsidian.ja-1.svg)
+![blog-auto-publishing-with-obsidian.ja.md 3 mermaid image](/posts/blog-auto-publishing-with-obsidian/blog-auto-publishing-with-obsidian.ja-1.svg)
 
 最も懸念していたのは**自動コミットと手動コミットが一つのリポジトリ内で絡み合う状況**だった。  
 GitHub Actionsが記事を自動でコミット・デプロイしている間に、自分がローカルでCSSやレイアウトを修正したらどうなるだろうか？
@@ -61,7 +61,7 @@ GitHub Actionsが記事を自動でコミット・デプロイしている間に
 根本的な問題の原因は自動化プロセスがブログ記事を直接メインブランチにコミットしていることだ。
 
 では、**ビルド時に記事を動的に取得したらどうか？**
-![blog-auto-publishing-with-obsidian.ja.md 2 mermaid image](/posts/blog-auto-publishing-with-obsidian/blog-auto-publishing-with-obsidian.ja-2.svg)
+![blog-auto-publishing-with-obsidian.ja.md 3 mermaid image](/posts/blog-auto-publishing-with-obsidian/blog-auto-publishing-with-obsidian.ja-2.svg)
 
 
 こうすれば**記事リポジトリとブログコードリポジトリが完全に分離**される。各々の領域で独立してコミットし、ビルド時にだけ出会うのだ。コンフリクト？そんなものはそもそも発生しえない構造だ。

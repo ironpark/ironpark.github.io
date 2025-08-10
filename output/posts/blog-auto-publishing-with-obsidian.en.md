@@ -49,7 +49,7 @@ Though it worked perfectly in my head, in reality, many hidden pitfalls emerged.
 
 ### First Plan
 
-![blog-auto-publishing-with-obsidian.en.md 1 mermaid image](/posts/blog-auto-publishing-with-obsidian/blog-auto-publishing-with-obsidian.en-1.svg)
+![blog-auto-publishing-with-obsidian.en.md 3 mermaid image](/posts/blog-auto-publishing-with-obsidian/blog-auto-publishing-with-obsidian.en-1.svg)
 
 The biggest concern was **the entanglement of automatic commits and manual commits in the same repository**.  
 What happens if GitHub Actions automatically commits and deploys posts while I’m editing CSS or layout locally?
@@ -64,7 +64,7 @@ The root cause of the problem was that the automation process was committing blo
 
 So, what if **posts were fetched dynamically at build time?**
 
-![blog-auto-publishing-with-obsidian.en.md 2 mermaid image](/posts/blog-auto-publishing-with-obsidian/blog-auto-publishing-with-obsidian.en-2.svg)
+![blog-auto-publishing-with-obsidian.en.md 3 mermaid image](/posts/blog-auto-publishing-with-obsidian/blog-auto-publishing-with-obsidian.en-2.svg)
 
 This completely separates the post repository and the blog code repository. Each commits independently in their own domain and only meet at build time. Conflicts? Such a thing simply cannot happen in this structure.
 
