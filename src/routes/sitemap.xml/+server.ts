@@ -40,7 +40,7 @@ function generateUrlEntry(path: string, locale: string, changefreq: string, prio
 		<loc>${url}</loc>
 		<lastmod>${date}</lastmod>
 		<changefreq>${changefreq}</changefreq>
-		<priority>${priority}</priority>${alternateLinks}
+		<priority>${priority}</priority>
 	</url>`;
 }
 
