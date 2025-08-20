@@ -1,7 +1,4 @@
 User-agent: *
 Allow: /
  
-sitemap: https://ironpark.github.io/sitemap.xml
-sitemap: https://ironpark.github.io/rss.xml
-sitemap: https://ironpark.github.io/en/rss.xml
-sitemap: https://ironpark.github.io/ko/rss.xml
+Sitemap: https://ironpark.github.io/sitemap.xml
