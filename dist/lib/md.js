@@ -31,7 +31,12 @@ export const execute = async (config) => {
         });
         let processedContent = "";
         for (const processedToken of processedTokens) {
-            processedContent += await processedToken;
+            try {
+                processedContent += await processedToken;
+            }
+            catch (error) {
+                console.error(`[MD] ${mdFile} processedToken`, error);
+            }
         }
         const markdown = metadataRaw + processedContent;
         if (config.processedMd) {

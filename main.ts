@@ -8,14 +8,13 @@ import utils from './lib/utils.js'
 import { Cache } from './lib/cache.js'
 
 // create temp dir
-const tempDir = "temp"
 
 const config = {
     originalPosts: "posts",
     output: "output",
     cache: ".cache",
     assets: "assets",
-    temp: tempDir,
+    temp:  "temp",
 }
 
 // clean up
@@ -114,6 +113,7 @@ executeSequence([
             ],
         },
         processedMd: async (src:string, {markdown, metadata}) => {
+            console.log(`[POSTS] ${metadata.slug}.${metadata.lang}.md`)
             fs.writeFileSync(path.join(config.output, "posts", `${metadata.slug}.${metadata.lang}.md`), markdown)
         }
     },

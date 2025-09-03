@@ -6,13 +6,12 @@ import { mermaidProcessor, wikilinkProcessorV2, imageCopyProcessor } from './pro
 import utils from './lib/utils.js';
 import { Cache } from './lib/cache.js';
 // create temp dir
-const tempDir = "posts";
 const config = {
     originalPosts: "posts",
     output: "output",
     cache: ".cache",
     assets: "assets",
-    temp: tempDir,
+    temp: "temp",
 };
 // clean up
 utils.rmAnyway([config.output, config.temp]);
@@ -103,6 +102,7 @@ executeSequence([
             ],
         },
         processedMd: async (src, { markdown, metadata }) => {
+            console.log(`[POSTS] ${metadata.slug}.${metadata.lang}.md`);
             fs.writeFileSync(path.join(config.output, "posts", `${metadata.slug}.${metadata.lang}.md`), markdown);
         }
     },
