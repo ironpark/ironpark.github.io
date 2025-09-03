@@ -8,7 +8,7 @@ import utils from './lib/utils.js'
 import { Cache } from './lib/cache.js'
 
 // create temp dir
-const tempDir = path.join(os.tmpdir(), "posts")
+const tempDir = "posts"
 
 const config = {
     originalPosts: "posts",
