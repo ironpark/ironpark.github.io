@@ -122,7 +122,7 @@
     }
 </script>
 
-<div bind:this={codeBlockRef} class="relative rounded-lg border border-gray-200 dark:border-gray-800">
+<div bind:this={codeBlockRef} class="relative rounded-lg border border-gray-200 dark:border-gray-800 mt-2">
     <div class="flex items-center justify-between px-4 py-2 border-b border-gray-200 dark:border-gray-800">
         <span class="text-sm font-medium text-gray-600 dark:text-gray-400">
             {lang.toUpperCase()}

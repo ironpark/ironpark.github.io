@@ -85,6 +85,16 @@
   prose-ul:list-disc prose-ul:pl-6 prose-ul:my-0 prose-ul:mt-4
   prose-p:mb-0 prose-p:mt-4
   ">
+    {#if locale === "en"}
+    <p class="text-base text-muted-foreground bg-muted p-4 rounded-md">
+      This post was originally written in Korean and has been automatically translated to English using LLM. There may be translation errors, typos, or contextually strange parts.
+    </p>
+    {/if}
+    {#if locale === "ja"}
+    <p class="text-base text-muted-foreground bg-muted p-4 rounded-md">
+      この投稿は元々韓国語で書かれており、LLMを使用して日本語に自動翻訳されています。翻訳エラー、タイプミス、または文脈上奇妙な部分がある可能性があります。
+    </p>
+    {/if}
     {@render children?.()}
   </div>
   <div class="my-15 border-b border-dashed dark:border-white/50 border-black/50"></div>

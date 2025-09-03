@@ -10,7 +10,7 @@ import { remarkAutoImportCodeBlock } from './src/lib/remark-auto-import-codebloc
 
 const highlighter = await createHighlighter({
 	themes: ['github-dark'],
-	langs: ['javascript', 'typescript', 'yaml', 'go']
+	langs: ['javascript', 'typescript', 'yaml', 'go', 'json', 'sql', 'bash']
 });
 // get dirname
 const dirname = path.dirname(fileURLToPath(import.meta.url));

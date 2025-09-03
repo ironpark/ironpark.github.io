@@ -6,8 +6,6 @@
   interface Props {
     data: PageData;
   }
-  const locale = getLocale();
-
   let { data }: Props = $props();
 </script>
 

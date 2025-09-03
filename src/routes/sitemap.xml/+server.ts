@@ -1,6 +1,7 @@
 import type { RequestHandler } from './$types';
 import { promises as fs } from 'fs';
 import path from 'path';
+import parseMD from 'parse-md'
 
 export const prerender = true;
 
@@ -17,23 +18,19 @@ interface SitemapEntry {
 interface BlogPost {
 	slug: string;
 	lastmod: string;
+	published?: string;
 }
 
 function generateUrl(path: string, locale: string): string {
 	return locale === BASE_LOCALE ? `${BASE_URL}${path}` : `${BASE_URL}/${locale}${path}`;
 }
 
-function generateAlternateLinks(path: string): string {
-	return LOCALES.map(locale => {
-		const url = generateUrl(path, locale);
-		return `\n\t\t<xhtml:link rel="alternate" hreflang="${locale}" href="${url}"/>`;
-	}).join('');
-}
-
 function generateUrlEntry(path: string, locale: string, changefreq: string, priority: number, lastmod?: string): string {
 	const url = generateUrl(path, locale);
-	const date = lastmod || new Date().toISOString().split('T')[0];
-	const alternateLinks = generateAlternateLinks(path);
+	let date = lastmod || new Date().toISOString();
+	if (date.includes('T')) {
+		date = date.split('T')[0];
+	}
 	
 	return `
 	<url>
@@ -65,22 +62,19 @@ export const GET: RequestHandler = async () => {
 		
 		// Convert the import.meta.glob path to actual file system path
 		const actualPath = path.join(process.cwd(), filePath.substring(1)); // Remove leading '/'
-		
+		const { metadata } = parseMD(await fs.readFile(actualPath, 'utf8')) as { metadata: {[key:string]:any} };
 		try {
 			const stats = await fs.stat(actualPath);
 			const lastmod = stats.mtime.toISOString().split('T')[0];
-			console.log(slug,lastmod);
+			const published = metadata.published;
+			console.log(slug,lastmod,published);
 			// Update the blog post entry if this file is newer
 			const existing = blogPosts.get(slug);
 			if (!existing || existing.lastmod < lastmod) {
-				blogPosts.set(slug, { slug, lastmod });
+				blogPosts.set(slug, { slug, lastmod, published });
 			}
 		} catch (error) {
             console.error(error);
-			// If we can't get the file stats, use current date
-			if (!blogPosts.has(slug)) {
-				blogPosts.set(slug, { slug, lastmod: new Date().toISOString().split('T')[0] });
-			}
 		}
 	}
 	
@@ -91,14 +85,16 @@ export const GET: RequestHandler = async () => {
 	// Add static pages
 	staticPages.forEach(page => {
 		LOCALES.forEach(locale => {
-			xml += generateUrlEntry(page.path, locale, page.changefreq, page.priority);
+			xml += generateUrlEntry(page.path, locale, page.changefreq, page.priority, '2025-07-25');
 		});
 	});
 	
 	// Add blog posts
 	Array.from(blogPosts.values()).forEach(post => {
 		LOCALES.forEach(locale => {
-			xml += generateUrlEntry(`/blog/${post.slug}`, locale, 'monthly', 0.7, post.lastmod);
+			if (post.published && post.published) {
+				xml += generateUrlEntry(`/blog/${post.slug}`, locale, 'monthly', 0.7, post.published || post.lastmod);
+			}
 		});
 	});
 	
