@@ -187,5 +187,6 @@
     :global(.shiki) {
         margin: 0 !important;
         border-radius: 0 !important;
+        line-height: 1 !important;
     }
 </style>
