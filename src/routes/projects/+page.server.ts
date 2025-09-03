@@ -6,10 +6,10 @@ export const prerender = true;
 
 // 여기에 표시하고 싶은 리포지토리 이름들을 추가하세요
 const REPO_NAMES = [
-  // 예시 - 실제 리포지토리로 변경하세요
   'ironpark/ivent',
   'ironpark/zapp',
   'ironpark/ironpark.github.io',
+  'ironpark/teatime',
   // 'ironpark/your-repo-name',
   // 더 많은 리포지토리 추가...
 ];
