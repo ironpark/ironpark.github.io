@@ -1,5 +1,4 @@
 import fs from 'fs';
-import os from 'os';
 import path from 'path';
 import { executeSequence } from './lib/md.js';
 import { translate, translateMetadata } from './lib/trans.js';
@@ -7,7 +6,7 @@ import { mermaidProcessor, wikilinkProcessorV2, imageCopyProcessor } from './pro
 import utils from './lib/utils.js';
 import { Cache } from './lib/cache.js';
 // create temp dir
-const tempDir = path.join(os.tmpdir(), "posts");
+const tempDir = "posts";
 const config = {
     originalPosts: "posts",
     output: "output",
