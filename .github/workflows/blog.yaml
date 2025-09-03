@@ -44,6 +44,8 @@ jobs:
         run: |
           rm -rf ./src/content/blog ; mkdir -p ./src/content/blog
           rm -rf ./static/posts ; mkdir -p ./static/posts
+          cp -r ./sync/output/posts/*.md ./src/content/blog 2>/dev/null
+          cp -r ./sync/output/static/posts/* ./static/posts 2>/dev/null
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Build
